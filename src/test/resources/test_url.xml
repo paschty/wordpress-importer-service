@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mycoreobject xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="datamodel-mods.xsd" ID="mir_mods_00000216" label="mir_mods_00000216" version="2015.11">
+  <structure>
+
+  </structure>
+  <metadata>
+    <def.modsContainer class="MCRMetaXML" heritable="false" notinherit="true">
+      <modsContainer inherited="0">
+        <mods:mods xmlns:mods="http://www.loc.gov/mods/v3">
+          <mods:identifier type="urn">urn:nbn:de:0301-20160126-171307-03</mods:identifier>
+          <mods:name type="personal" xlink:type="simple">
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:displayForm>Ioannidis, Michael</mods:displayForm>
+          </mods:name>
+          <mods:location>
+            <mods:url access="raw object">http://verfassungsblog.de/a-new-page-in-protecting-european-constitutional-values-how-to-best-use-the-new-eu-rule-of-law-framework-vis-a-vis-poland/</mods:url>
+          </mods:location>
+          <mods:accessCondition type="use and reproduction" xlink:href="http://www.mycore.org/classifications/mir_licenses#cc_by-nc-nd_4.0" />
+          <mods:name type="corporate" authorityURI="http://www.mycore.org/classifications/mir_institutes" valueURI="http://www.mycore.org/classifications/mir_institutes#mpiaorv" xlink:type="simple">
+            <mods:role>
+              <mods:roleTerm authority="marcrelator" type="code">his</mods:roleTerm>
+            </mods:role>
+          </mods:name>
+          <mods:relatedItem type="host" xlink:href="mir_mods_00000217" xlink:type="simple">
+            <mods:location>
+              <mods:url access="raw object">http://verfassungsblog.de/</mods:url>
+            </mods:location>
+            <mods:genre type="intern" authorityURI="http://www.mycore.org/classifications/mir_genres" valueURI="http://www.mycore.org/classifications/mir_genres#blog" />
+            <mods:typeOfResource>text</mods:typeOfResource>
+            <mods:name type="personal" xlink:type="simple">
+              <mods:nameIdentifier typeURI="http://d-nb.info/gnd/" type="gnd">124886647</mods:nameIdentifier>
+              <mods:displayForm>Steinbeis, Maximilian</mods:displayForm>
+              <mods:role>
+                <mods:roleTerm authority="marcrelator" type="code">aut</mods:roleTerm>
+              </mods:role>
+              <mods:namePart type="family">Steinbeis</mods:namePart>
+              <mods:namePart type="given">Maximilian</mods:namePart>
+            </mods:name>
+            <mods:originInfo eventType="publication">
+              <mods:dateIssued encoding="w3cdtf">2011</mods:dateIssued>
+            </mods:originInfo>
+            <mods:language>
+              <mods:languageTerm authority="rfc4646" type="code">de</mods:languageTerm>
+            </mods:language>
+            <mods:classification authorityURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik" displayLabel="intr2dok" valueURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik#idiszi_2" />
+            <mods:classification authority="ddc" displayLabel="ddc">342</mods:classification>
+            <mods:accessCondition type="use and reproduction" xlink:href="http://www.mycore.org/classifications/mir_licenses#cc_by-nc-nd_4.0" xlink:type="simple" />
+          </mods:relatedItem>
+        </mods:mods>
+      </modsContainer>
+    </def.modsContainer>
+  </metadata>
+</mycoreobject>

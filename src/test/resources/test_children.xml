@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mycoreobject xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="datamodel-mods.xsd" ID="mir_mods_00000217" label="mir_mods_00000217" version="2015.11">
+  <structure>
+    <children class="MCRMetaLinkID">
+      <child inherited="0" xlink:type="locator" xlink:title="mir_mods_00000216" xlink:label="mir_mods_00000216" xlink:href="mir_mods_00000216" />
+      <child inherited="0" xlink:type="locator" xlink:title="mir_mods_00001394" xlink:href="mir_mods_00001394" />
+      <child inherited="0" xlink:type="locator" xlink:title="mir_mods_00001348" xlink:href="mir_mods_00001395" />
+      <child inherited="0" xlink:type="locator" xlink:title="mir_mods_00001348" xlink:href="mir_mods_00001396" />
+      <child inherited="0" xlink:type="locator" xlink:title="mir_mods_00001397" xlink:href="mir_mods_00001397" />
+      <child inherited="0" xlink:type="locator" xlink:title="mir_mods_00001398" xlink:href="mir_mods_00001398" />
+    </children>
+  </structure>
+  <metadata>
+    <def.modsContainer class="MCRMetaXML" heritable="false" notinherit="true">
+      <modsContainer inherited="0">
+      </modsContainer>
+    </def.modsContainer>
+  </metadata>
+  <service>
+    <servdates class="MCRMetaISO8601Date">
+      <servdate type="createdate" inherited="0">2016-01-26T16:09:32.408Z</servdate>
+      <servdate type="modifydate" inherited="0">2018-07-09T08:03:23.551Z</servdate>
+    </servdates>
+    <servflags class="MCRMetaLangText">
+      <servflag type="createdby" inherited="0" form="plain">cmathieu</servflag>
+      <servflag type="modifiedby" inherited="0" form="plain">cmathieu</servflag>
+    </servflags>
+    <servstates class="MCRMetaClassification">
+      <servstate inherited="0" classid="state" categid="published" />
+    </servstates>
+  </service>
+</mycoreobject>

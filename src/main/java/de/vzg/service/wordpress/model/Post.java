@@ -18,6 +18,7 @@
 
 package de.vzg.service.wordpress.model;
 
+import java.util.List;
 import java.util.Map;
 
 public class Post {
@@ -28,8 +29,9 @@ public class Post {
 
     private PostContent title, content;
 
-    private Map<Integer, Integer> categoeries, tags;
+    private List<Integer> categoeries, tags;
 
+    private Map<String, String> guid;
 
     public int getId() {
         return id;
@@ -143,19 +145,48 @@ public class Post {
         this.content = content;
     }
 
-    public Map<Integer, Integer> getCategoeries() {
+    public List<Integer> getCategoeries() {
         return categoeries;
     }
 
-    public void setCategoeries(Map<Integer, Integer> categoeries) {
+    public void setCategoeries(List<Integer> categoeries) {
         this.categoeries = categoeries;
     }
 
-    public Map<Integer, Integer> getTags() {
+    public List<Integer> getTags() {
         return tags;
     }
 
-    public void setTags(Map<Integer, Integer> tags) {
+    public void setTags(List<Integer> tags) {
         this.tags = tags;
+    }
+
+    @Override public String toString() {
+        return "Post{" +
+            "id=" + id +
+            ", author=" + author +
+            ", date='" + date + '\'' +
+            ", date_gmt='" + date_gmt + '\'' +
+            ", modified='" + modified + '\'' +
+            ", modified_gmt='" + modified_gmt + '\'' +
+            ", slug='" + slug + '\'' +
+            ", status='" + status + '\'' +
+            ", link='" + link + '\'' +
+            ", comment_status='" + comment_status + '\'' +
+            ", ping_status='" + ping_status + '\'' +
+            ", format='" + format + '\'' +
+            ", title=" + title +
+            ", content=" + content +
+            ", categoeries=" + categoeries +
+            ", tags=" + tags +
+            '}';
+    }
+
+    public Map<String, String> getGuid() {
+        return guid;
+    }
+
+    public void setGuid(Map<String, String> guid) {
+        this.guid = guid;
     }
 }
