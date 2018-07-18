@@ -31,14 +31,18 @@ public class ImporterConfiguration {
         this.parts = parts;
     }
 
+    public static Path getConfigPath() {
+        final String homeFolder = System.getProperty("user.home");
+        final Path homeFolderPath = Paths.get(homeFolder);
+        return homeFolderPath.resolve(".wpimport");
+    }
+
     private static class ConfigurationInstanceHolder {
         private static final ImporterConfiguration instance = initConfiguration();
 
         private static ImporterConfiguration initConfiguration() {
             try {
-                final String homeFolder = System.getProperty("user.home");
-                final Path homeFolderPath = Paths.get(homeFolder);
-                final Path wpimportFolder = homeFolderPath.resolve(".wpimport");
+                final Path wpimportFolder = getConfigPath();
                 final Path wpConfigFile = wpimportFolder.resolve("config.json");
 
                 if (!Files.exists(wpimportFolder)) {

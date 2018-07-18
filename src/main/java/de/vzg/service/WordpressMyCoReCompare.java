@@ -1,6 +1,7 @@
 package de.vzg.service;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -60,8 +61,9 @@ public class WordpressMyCoReCompare {
         }
 
         comparingResult.getNotImportedPosts()
-            .addAll(notImported.values().stream().map(WordpressMyCoReCompare::getInfo).collect(Collectors
-                .toSet()));
+            .addAll(notImported.values().stream().sorted(Comparator.comparing(Post::getDate).reversed())
+                .map(WordpressMyCoReCompare::getInfo).collect(Collectors
+                    .toList()));
 
         return comparingResult;
     }

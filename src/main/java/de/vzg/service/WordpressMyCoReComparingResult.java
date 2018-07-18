@@ -1,24 +1,22 @@
 package de.vzg.service;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import de.vzg.service.wordpress.model.Post;
 
 public class WordpressMyCoReComparingResult {
 
-    private Set<PostInfo> notImportedPosts;
+    private List<PostInfo> notImportedPosts;
 
     private Map<PostInfo, String> postMyCoReIDMap;
 
     public WordpressMyCoReComparingResult() {
-        this.notImportedPosts = new HashSet<>();
+        this.notImportedPosts = new LinkedList<>();
         this.postMyCoReIDMap = new HashMap<>();
     }
 
-    public Set<PostInfo> getNotImportedPosts() {
+    public List<PostInfo> getNotImportedPosts() {
         return notImportedPosts;
     }
 

@@ -2,6 +2,16 @@ package de.vzg.service.mycore;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,25 +29,51 @@ import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import de.vzg.service.Utils;
+import de.vzg.service.configuration.ImporterConfiguration;
 
 public class LocalMyCoReObjectStore {
 
-    public static final int A_HOUR_IN_MILLIS = 1000 * 60 * 60;
-
+    public static final int FIVE_MINUTES = 1000 * 60 * 5;
     private static final Logger LOGGER = LogManager.getLogger();
-
     private static SimpleDateFormat SDF_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
 
     private String repoUrl;
-
     private Map<String, Document> idXMLMap;
 
-    private Date lastCheckDate = new Date(0);
+    private Date lastCheckDate;
+
+    private LocalMyCoReObjectStore() {
+    }
 
     private LocalMyCoReObjectStore(String repoUrl) {
         this.repoUrl = repoUrl;
-        idXMLMap = new ConcurrentHashMap<>();
+
+        final Path databasePath = getDatabasePath();
+
+        if (Files.exists(databasePath)) {
+            loadFromFile();
+        } else {
+            idXMLMap = new ConcurrentHashMap<>();
+            lastCheckDate = new Date(0);
+        }
+    }
+
+    private void loadFromFile() {
+        Path databasePath = getDatabasePath();
+        try (InputStream is = Files.newInputStream(databasePath)) {
+            try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                final LocalMyCoReObjectStore savedStore = getGson().fromJson(isr, LocalMyCoReObjectStore.class);
+                lastCheckDate = savedStore.lastCheckDate;
+                repoUrl = savedStore.repoUrl;
+                idXMLMap = savedStore.idXMLMap;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading " + databasePath.toString());
+        }
     }
 
     public static LocalMyCoReObjectStore getInstance(String url) {
@@ -80,11 +116,49 @@ public class LocalMyCoReObjectStore {
                 }
             });
             lastCheckDate = date;
+            saveToFile();
         }
     }
 
+    private void saveToFile() {
+        final Gson gson = getGson();
+
+        final Path dbPath = getDatabasePath();
+        try (OutputStream os = Files.newOutputStream(dbPath, StandardOpenOption.CREATE, StandardOpenOption.SYNC)) {
+            try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
+                gson.toJson(this, writer);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error while writing mycoredb", e);
+        }
+    }
+
+    private Gson getGson() {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Document.class, new DocumentTypeAdapter());
+        return gsonBuilder.create();
+    }
+
+    private Path getDatabasePath() {
+        return ImporterConfiguration.getConfigPath().resolve(getDatabaseName());
+    }
+
+    private String getDatabaseName() {
+        return "mycoredb_" + getHost() + ".json";
+    }
+
+    private String getHost() {
+        String host;
+        try {
+            host = new URL(this.repoUrl).getHost();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        return host;
+    }
+
     private boolean isUpToDate() {
-        return new Date().getTime() - lastCheckDate.getTime() < A_HOUR_IN_MILLIS;
+        return new Date().getTime() - lastCheckDate.getTime() < FIVE_MINUTES;
     }
 
     private static class ObjectFetcher {
