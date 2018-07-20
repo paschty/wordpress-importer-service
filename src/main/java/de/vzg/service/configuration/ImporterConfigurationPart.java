@@ -17,6 +17,11 @@ public class ImporterConfigurationPart {
      */
     private String parentObject;
 
+    /**
+     * The template which will be used to generate a object
+     */
+    private String postTempate;
+
 
     public String getBlog() {
         return blog;
@@ -40,5 +45,13 @@ public class ImporterConfigurationPart {
 
     public void setParentObject(String parentObject) {
         this.parentObject = parentObject;
+    }
+
+    public String getPostTempate() {
+        return postTempate;
+    }
+
+    public void setPostTempate(String postTempate) {
+        this.postTempate = postTempate;
     }
 }

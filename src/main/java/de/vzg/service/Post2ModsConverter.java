@@ -1,10 +1,24 @@
 package de.vzg.service;
 
+import static de.vzg.service.mycore.MODSUtil.MODS_NAMESPACE;
+import static de.vzg.service.mycore.MODSUtil.XLINK_NAMESPACE;
+
+import de.vzg.service.configuration.ImporterConfiguration;
+import de.vzg.service.mycore.MODSUtil;
+import de.vzg.service.wordpress.UserFetcher;
+import de.vzg.service.wordpress.model.Post;
+import de.vzg.service.wordpress.model.User;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.naming.ConfigurationException;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -15,13 +29,10 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.jsoup.Jsoup;
 
-import de.vzg.service.mycore.MODSUtil;
-import static de.vzg.service.mycore.MODSUtil.MODS_NAMESPACE;
-import static de.vzg.service.mycore.MODSUtil.XLINK_NAMESPACE;
-import de.vzg.service.wordpress.UserFetcher;
-import de.vzg.service.wordpress.model.Post;
-import de.vzg.service.wordpress.model.User;
-
+/**
+ * Reads a template with a name from {@link ImporterConfiguration#getConfigPath()} and sets some values with xpath from
+ * a {@link Post} to it.
+ */
 public class Post2ModsConverter {
 
     public static final String MODS_TEMPLATE_FILE = "mods_template.xml";
@@ -59,22 +70,40 @@ public class Post2ModsConverter {
 
     private final String blogURL;
 
-    private Document modsTemplate;
+    private final String templateName;
 
-    public Post2ModsConverter(Post blogPost, String parentID, String blogURL) {
+    private final Document modsTemplate;
+
+    public Post2ModsConverter(Post blogPost, String parentID, String blogURL, String template) {
         this.blogPost = blogPost;
         this.parentID = parentID;
         this.blogURL = blogURL;
+        this.templateName = template;
+        modsTemplate = loadModsTemplate();
+
     }
 
-    private void loadModsTemplate() {
-        try (final InputStream is = Post2ModsConverter.class.getClassLoader().getResourceAsStream(MODS_TEMPLATE_FILE)) {
-            modsTemplate = new SAXBuilder().build(is);
+    private Document loadModsTemplate() {
+        try (final InputStream is = getTemplateStream()) {
+            return new SAXBuilder().build(is);
         } catch (IOException e) {
             throw new RuntimeException("Could not load mods template!", e);
         } catch (JDOMException e) {
             throw new RuntimeException("Could not parse mods template!", e);
         }
+    }
+
+    private InputStream getTemplateStream() throws IOException {
+        if (templateName != null) {
+            Path templatePath = ImporterConfiguration.getConfigPath().resolve(templateName);
+            if (Files.exists(templatePath)) {
+                return Files.newInputStream(templatePath, StandardOpenOption.READ);
+            } else {
+                throw new RuntimeException(
+                    new ConfigurationException("The template file '" + templatePath.toString() + "' does not exist! "));
+            }
+        }
+        return Post2ModsConverter.class.getClassLoader().getResourceAsStream(MODS_TEMPLATE_FILE);
     }
 
     private void setTitle() {
@@ -154,8 +183,6 @@ public class Post2ModsConverter {
     }
 
     public Document getMods() {
-        loadModsTemplate();
-
         setTitle();
         setDateIssued();
         setAuthor();
