@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 
-class PostFetcher {
+public class PostFetcher {
 
     public static final String V2_POSTS_PAGE_PARAM = "page";
 

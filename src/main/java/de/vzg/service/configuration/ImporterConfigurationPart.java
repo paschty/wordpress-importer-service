@@ -22,6 +22,8 @@ public class ImporterConfigurationPart {
      */
     private String postTempate;
 
+    private String derivateIDTemplate;
+
 
     public String getBlog() {
         return blog;
@@ -53,5 +55,13 @@ public class ImporterConfigurationPart {
 
     public void setPostTempate(String postTempate) {
         this.postTempate = postTempate;
+    }
+
+    public String getDerivateIDTemplate() {
+        return derivateIDTemplate;
+    }
+
+    public void setDerivateIDTemplate(String derivateIDTemplate) {
+        this.derivateIDTemplate = derivateIDTemplate;
     }
 }

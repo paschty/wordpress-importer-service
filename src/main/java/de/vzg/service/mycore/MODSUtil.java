@@ -1,6 +1,7 @@
 package de.vzg.service.mycore;
 
-import java.util.ArrayList;
+import de.vzg.service.Utils;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,8 +12,6 @@ import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-
-import de.vzg.service.Utils;
 
 public class MODSUtil {
 
