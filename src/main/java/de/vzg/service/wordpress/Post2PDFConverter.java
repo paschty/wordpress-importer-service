@@ -75,7 +75,8 @@ public class Post2PDFConverter {
     }
 
     private String getXHtml(Post post) {
-        final Document document = Jsoup.parse(post.getContent().getRendered());
+        final Document document = Jsoup
+            .parse("<h1>" + post.getTitle().getRendered() + "</h1>" + post.getContent().getRendered());
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
         String html = document.html();
 

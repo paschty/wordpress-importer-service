@@ -89,23 +89,6 @@ public class ServiceResource {
         }).header("Content-Disposition", "attachment; filename=\"" + getTitleFileName(post) + ".pdf\"").build();
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    @Path("convert/derivate/{config}/{id}")
-    public Response convertBlogPostDerivate(@PathParam("config") String configName, @PathParam("id") int postID,
-        @QueryParam("parent") String parent)
-        throws IOException {
-        final ImporterConfigurationPart config = ImporterConfiguration.getConfiguration().getParts()
-            .get(configName);
-        Post post = PostFetcher.fetchPost(config.getBlog(), postID);
-
-        String fileName = getTitleFileName(post);
-        Document derivate = new DerivateCreater().createDerivate(config.getDerivateIDTemplate(), parent, fileName);
-        return Response.ok((StreamingOutput) os->{
-            new XMLOutputter(Format.getPrettyFormat()).output(derivate, os);
-        }).build();
-    }
-
     private String getTitleFileName(Post post) {
         return Jsoup.parseBodyFragment(post.getTitle().getRendered()).text()
             .replaceAll("[ ]", "_")
