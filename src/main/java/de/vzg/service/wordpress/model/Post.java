@@ -25,7 +25,7 @@ public class Post {
 
     private int id, author;
 
-    private String date, date_gmt, modified, modified_gmt, slug, status, link, comment_status, ping_status, format;
+    private String wps_subtitle, date, date_gmt, modified, modified_gmt, slug, status, link, comment_status, ping_status, format;
 
     private PostContent title, content;
 
@@ -159,6 +159,14 @@ public class Post {
 
     public void setTags(List<Integer> tags) {
         this.tags = tags;
+    }
+
+    public String getWps_subtitle() {
+        return wps_subtitle;
+    }
+
+    public void setWps_subtitle(String wps_subtitle) {
+        this.wps_subtitle = wps_subtitle;
     }
 
     @Override public String toString() {

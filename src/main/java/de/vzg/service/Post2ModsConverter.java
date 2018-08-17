@@ -111,13 +111,18 @@ public class Post2ModsConverter {
         final Element subTitleElement = getElement(SUB_TITLE_XPATH);
 
         final String completeTitle = Jsoup.parseBodyFragment(this.blogPost.getTitle().getRendered()).text();
+        String subTitle = blogPost.getWps_subtitle();
 
-        if(completeTitle.contains(":")){
+        if (completeTitle.contains(":") && (subTitle == null || subTitle
+            .isEmpty())) {
             final String[] titles = completeTitle.split(":", 2);
             final String mainTitle = titles[0];
-            final String subTitle = titles[1];
+            subTitle = titles[1];
 
             titleElement.setText(mainTitle);
+            subTitleElement.setText(subTitle);
+        } else if (subTitle !=null && !subTitle.isEmpty()) {
+            titleElement.setText(completeTitle);
             subTitleElement.setText(subTitle);
         } else {
             titleElement.setText(completeTitle);
