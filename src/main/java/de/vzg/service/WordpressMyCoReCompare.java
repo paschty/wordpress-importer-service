@@ -53,7 +53,7 @@ public class WordpressMyCoReCompare {
             if (fulltextURL.isPresent()) {
                 if (notImported.containsKey(fulltextURL.get())) {
                     final Post post = notImported.remove(fulltextURL.get());
-                    comparingResult.getPostMyCoReIDMap().put(getInfo(post), child);
+                    comparingResult.getMyCoReIDPostMap().put(child,getInfo(post));
                 }
             } else {
                 LOGGER.warn("{} has no url to a blog post!", child);

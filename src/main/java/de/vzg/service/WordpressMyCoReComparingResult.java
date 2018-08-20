@@ -9,18 +9,18 @@ public class WordpressMyCoReComparingResult {
 
     private List<PostInfo> notImportedPosts;
 
-    private Map<PostInfo, String> postMyCoReIDMap;
+    private Map<String,PostInfo> mycoreIDPostMap;
 
     public WordpressMyCoReComparingResult() {
         this.notImportedPosts = new LinkedList<>();
-        this.postMyCoReIDMap = new HashMap<>();
+        this.mycoreIDPostMap = new HashMap<>();
     }
 
     public List<PostInfo> getNotImportedPosts() {
         return notImportedPosts;
     }
 
-    public Map<PostInfo, String> getPostMyCoReIDMap() {
-        return postMyCoReIDMap;
+    public Map<String,PostInfo> getMyCoReIDPostMap() {
+        return mycoreIDPostMap;
     }
 }
