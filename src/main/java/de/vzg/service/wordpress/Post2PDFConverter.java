@@ -18,14 +18,14 @@
 
 package de.vzg.service.wordpress;
 
-import de.vzg.service.wordpress.model.Post;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.transform.Result;
@@ -38,12 +38,19 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.http.client.fluent.Request;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.xmlgraphics.io.Resource;
+import org.apache.xmlgraphics.io.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.helpers.DefaultHandler;
+
+import de.vzg.service.wordpress.model.Post;
+import de.vzg.service.wordpress.model.User;
 
 public class Post2PDFConverter {
 
@@ -56,8 +63,9 @@ public class Post2PDFConverter {
 
     }
 
-    public void getPDF(Post post, OutputStream os) throws FOPException, TransformerException, IOException {
-        String htmlContent = getXHtml(post);
+    public void getPDF(Post post, OutputStream os, String blog, String license)
+        throws FOPException, TransformerException, IOException {
+        String htmlContent = getXHtml(post, blog, license);
 
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("xhtml2fo.xsl")) {
             Transformer transformer = SAXTransformerFactory.newInstance().newTransformer(new StreamSource(is));
@@ -74,14 +82,10 @@ public class Post2PDFConverter {
         }
     }
 
-    private String getXHtml(Post post) {
-        String htmlString = "<h1>" + post.getTitle().getRendered() + "</h1>";
+    private String getXHtml(Post post, String blog, String license) throws IOException {
+        String htmlString = getBaseHTML(post, blog);
 
-        if (post.getWps_subtitle() != null && !post.getWps_subtitle().isEmpty()) {
-            htmlString += "<h2>" + post.getWps_subtitle() + "</h2>";
-        }
-
-        htmlString += post.getContent().getRendered();
+        htmlString += post.getContent().getRendered() + getLicense(license);
         final Document document = Jsoup
             .parse(htmlString);
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
@@ -94,8 +98,52 @@ public class Post2PDFConverter {
             + "]> " + html.replace("<html>", "<html xmlns=\"http://www.w3.org/1999/xhtml\">");
     }
 
+    private String getLicense(String license) {
+        if (license != null) {
+            return "<hr/><a href='https://creativecommons.org/licenses/" + license
+                + "'><img border='0' src='https://i.creativecommons.org/l/" + license
+                + "/80x15.png'></img></a>";
+        }
+        return "";
+    }
+
+    private String getBaseHTML(Post post, String blog) throws IOException {
+        String htmlString = "<h1>" + post.getTitle().getRendered() + "</h1>";
+
+        if (post.getWps_subtitle() != null && !post.getWps_subtitle().isEmpty()) {
+            htmlString += "<h2>" + post.getWps_subtitle() + "</h2>";
+        }
+
+        final User user = UserFetcher.fetchUser(blog, post.getAuthor());
+        final String name = user.getName();
+
+        htmlString += "<hr/><table border='0'><tr><td>" + name + "</td>";
+        htmlString += "<td align='right'>" + post.getDate() + "</td></tr></table>";
+
+
+
+        return htmlString;
+    }
+
     private void initFopFactory() throws URISyntaxException {
-        fopFactory = FopFactory.newInstance(new File(".").toURI());
+        fopFactory = new FopFactoryBuilder(new File(".").toURI(), new ResourceResolver() {
+            @Override
+            public Resource getResource(URI uri) throws IOException {
+                try {
+                    final URL url = uri.toURL();
+                    return new Resource(Request.Get(url.toString())
+                        .execute().returnContent().asStream());
+                } catch (Throwable t) {
+                    LOGGER.error("Error", t);
+                    throw t;
+                }
+            }
+
+            @Override
+            public OutputStream getOutputStream(URI uri) throws IOException {
+                return uri.toURL().openConnection().getOutputStream();
+            }
+        }).build();
     }
 
 }

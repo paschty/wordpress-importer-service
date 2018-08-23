@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration monitorinterval="30" status="debug" strict="true">
+<Configuration monitorinterval="30" status="info" strict="true">
   <Properties>
     <Property name="filename">log/service.log</Property>
   </Properties>
@@ -15,7 +15,7 @@
     </Appender>
   </Appenders>
   <Loggers>
-    <Root level="debug">
+    <Root level="info">
       <AppenderRef ref="File" />
       <AppenderRef ref="Console" />
       <!-- Use FLOW to trace down exact method sending the msg -->

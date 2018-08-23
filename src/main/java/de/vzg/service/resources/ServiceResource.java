@@ -82,7 +82,7 @@ public class ServiceResource {
         Post post = PostFetcher.fetchPost(config.getBlog(), postID);
         return Response.ok((StreamingOutput) outputStream -> {
             try {
-                new Post2PDFConverter().getPDF(post, outputStream);
+                new Post2PDFConverter().getPDF(post, outputStream, config.getBlog(), config.getLicense());
             } catch (FOPException | TransformerException | URISyntaxException e) {
                 throw new RuntimeException("Error while generating PDF!", e);
             }
