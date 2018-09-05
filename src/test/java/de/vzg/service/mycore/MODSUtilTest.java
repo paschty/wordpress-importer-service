@@ -14,7 +14,7 @@ public class MODSUtilTest {
 
     private static final String EXPECTED_CHILDREN = "mir_mods_00000216,mir_mods_00001394,mir_mods_00001395,mir_mods_00001396,mir_mods_00001397,mir_mods_00001398";
 
-    private static final String EXPECTED_URL = "http://verfassungsblog.de/a-new-page-in-protecting-european-constitutional-values-how-to-best-use-the-new-eu-rule-of-law-framework-vis-a-vis-poland/";
+    private static final String EXPECTED_URL = "https://verfassungsblog.de/a-new-page-in-protecting-european-constitutional-values-how-to-best-use-the-new-eu-rule-of-law-framework-vis-a-vis-poland/";
 
     private static Document readDocument(String file) throws IOException, JDOMException {
         try (InputStream is = MODSUtilTest.class.getClassLoader().getResourceAsStream(file)) {
