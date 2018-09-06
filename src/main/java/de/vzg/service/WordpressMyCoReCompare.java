@@ -38,7 +38,7 @@ public class WordpressMyCoReCompare {
         for (Post cur : allPosts) {
             final String curlLink = cur.getLink();
             if (notImported.containsKey(curlLink)) {
-                LOGGER.warn("Double post link: {} and {}", cur.getId(), notImported.get(curlLink).getId());
+                //LOGGER.warn("Double post link: {} and {}", cur.getId(), notImported.get(curlLink).getId());
             }
             notImported.put(curlLink, cur);
         }
