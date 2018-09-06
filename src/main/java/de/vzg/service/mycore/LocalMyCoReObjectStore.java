@@ -1,8 +1,5 @@
 package de.vzg.service.mycore;
 
-import de.vzg.service.Utils;
-import de.vzg.service.configuration.ImporterConfiguration;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +31,9 @@ import org.jdom2.input.SAXBuilder;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import de.vzg.service.Utils;
+import de.vzg.service.configuration.ImporterConfiguration;
 
 public class LocalMyCoReObjectStore {
 
@@ -100,7 +100,7 @@ public class LocalMyCoReObjectStore {
 
     public synchronized void update(boolean force) {
         if (force || !isUpToDate()) {
-            LOGGER.debug("Update MyCoRe-Store!");
+            LOGGER.info("Update MyCoRe-Store!");
             final Document lastModifiedDocument = fetchObject("");
             final Date date = new Date();
             lastModifiedDocument.getRootElement().getChildren("mycoreobject").forEach(mycoreobjectElement -> {
@@ -115,6 +115,7 @@ public class LocalMyCoReObjectStore {
                     }
 
                     if (lastModified.getTime() > lastCheckDate.getTime()) {
+                        LOGGER.info("{} needs update {}<{}", id, lastCheckDate.getTime(), lastModified.getTime());
                         this.idXMLMap.put(id, fetchObject(id));
                     }
                 }
