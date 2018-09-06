@@ -48,7 +48,9 @@ public class LocalPostStore {
     private void saveToFile() {
         final Gson gson = getGson();
         final Path dbPath = getDatabasePath();
-        try (OutputStream os = Files.newOutputStream(dbPath, StandardOpenOption.CREATE, StandardOpenOption.SYNC)) {
+        try (OutputStream os = Files
+            .newOutputStream(dbPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.SYNC)) {
             try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
                 gson.toJson(this, writer);
             }
@@ -80,7 +82,7 @@ public class LocalPostStore {
         return new ArrayList<>(this.idPostMap.values());
     }
 
-    private void update() {
+    private synchronized void update() {
         try {
             final Date currentDate = new Date();
             final Set<Post> posts = PostFetcher.fetchUntil(instanceURL, lastUpdate);

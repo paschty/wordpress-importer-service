@@ -134,7 +134,9 @@ public class LocalMyCoReObjectStore {
         final Gson gson = getGson();
 
         final Path dbPath = getDatabasePath();
-        try (OutputStream os = Files.newOutputStream(dbPath, StandardOpenOption.CREATE, StandardOpenOption.SYNC)) {
+        try (OutputStream os = Files
+            .newOutputStream(dbPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.SYNC)) {
             try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
                 gson.toJson(this, writer);
             }
