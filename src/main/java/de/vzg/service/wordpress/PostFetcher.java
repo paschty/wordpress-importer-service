@@ -75,7 +75,7 @@ public class PostFetcher {
 
     public static Set<Post> fetchUntil(String instanceURL, Date until) throws IOException {
         final HttpClient httpClient = HttpClientBuilder.create().build();
-        int pageCount = -1;
+        int pageCount = 999;
         Date lastModified = null;
         Set<Post> postsUntil = new HashSet<Post>();
         for (int i = 1; i <= pageCount && (lastModified == null || lastModified.getTime() >= until.getTime()); i++) {
