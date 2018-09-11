@@ -37,7 +37,7 @@ import de.vzg.service.configuration.ImporterConfiguration;
 
 public class LocalMyCoReObjectStore {
 
-    public static final int FIVE_MINUTES = 1000 * 60 * 2;
+    public static final int FIFTEEN_MINUTES = 1000 * 60 * 15;
     private static final Logger LOGGER = LogManager.getLogger();
     private static SimpleDateFormat SDF_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
 
@@ -126,7 +126,7 @@ public class LocalMyCoReObjectStore {
             lastCheckDate = date;
             saveToFile();
         } else {
-            LOGGER.info("No update needed! {}<{}", new Date().getTime() - lastCheckDate.getTime(), FIVE_MINUTES);
+            LOGGER.info("No update needed! {}<{}", new Date().getTime() - lastCheckDate.getTime(), FIFTEEN_MINUTES);
         }
     }
 
@@ -170,7 +170,7 @@ public class LocalMyCoReObjectStore {
     }
 
     private boolean isUpToDate() {
-        return new Date().getTime() - lastCheckDate.getTime() < FIVE_MINUTES;
+        return new Date().getTime() - lastCheckDate.getTime() < FIFTEEN_MINUTES;
     }
 
     private static class ObjectFetcher {
