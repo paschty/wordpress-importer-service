@@ -18,7 +18,11 @@
 
 package de.vzg.service.wordpress;
 
+import de.vzg.service.wordpress.model.Post;
+import de.vzg.service.wordpress.model.User;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +30,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.transform.Result;
@@ -33,6 +38,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.apps.FOPException;
@@ -49,9 +55,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.vzg.service.wordpress.model.Post;
-import de.vzg.service.wordpress.model.User;
-
 public class Post2PDFConverter {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -67,10 +70,22 @@ public class Post2PDFConverter {
         throws FOPException, TransformerException, IOException {
         String htmlContent = getXHtml(post, blog, license);
 
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("xhtml2fo.xsl")) {
+        ByteArrayOutputStream result;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("cleanup-html.xsl")) {
             Transformer transformer = SAXTransformerFactory.newInstance().newTransformer(new StreamSource(is));
             final byte[] bytes = htmlContent.getBytes(StandardCharsets.UTF_8);
             try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
+                StreamSource htmlSource = new StreamSource(inputStream);
+                result = new ByteArrayOutputStream();
+                transformer.transform(htmlSource, new StreamResult(result));
+            }
+        }
+        byte[] cleanBytes = result.toByteArray();
+        LOGGER.info(new String(cleanBytes, Charset.defaultCharset()));
+
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("xhtml2fo.xsl")) {
+            Transformer transformer = SAXTransformerFactory.newInstance().newTransformer(new StreamSource(is));
+            try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(cleanBytes)) {
                 StreamSource htmlSource = new StreamSource(inputStream);
                 final FOUserAgent userAgent = fopFactory.newFOUserAgent();
                 userAgent.setProducer("Wordpress-Importer-Service");
@@ -91,7 +106,6 @@ public class Post2PDFConverter {
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
         String html = document.html();
 
-        LOGGER.info("XHTML: {}", html);
         return "<?xml version=\"1.0\"?> \n"
             + "<!DOCTYPE some_name [ \n"
             + "<!ENTITY nbsp \"&#160;\"> \n"
