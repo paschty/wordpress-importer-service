@@ -4,7 +4,6 @@ import de.vzg.service.Post2ModsConverter;
 import de.vzg.service.WordpressMyCoReCompare;
 import de.vzg.service.configuration.ImporterConfiguration;
 import de.vzg.service.configuration.ImporterConfigurationPart;
-import de.vzg.service.mycore.DerivateCreater;
 import de.vzg.service.wordpress.LocalPostStore;
 import de.vzg.service.wordpress.Post2PDFConverter;
 import de.vzg.service.wordpress.PostFetcher;
@@ -19,7 +18,6 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -28,7 +26,6 @@ import javax.xml.transform.TransformerException;
 import org.apache.fop.apps.FOPException;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
-import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.jsoup.Jsoup;
 
@@ -67,7 +64,7 @@ public class ServiceResource {
         final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog());
         final Post post = postStore.getPost(postID);
         final Document mods = new Post2ModsConverter(post, config.getParentObject(), config.getBlog(),
-            config.getPostTempate()).getMods();
+            config.getPostTemplate()).getMods();
 
         return new XMLOutputter().outputString(mods);
     }

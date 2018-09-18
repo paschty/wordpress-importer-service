@@ -20,7 +20,7 @@ public class ImporterConfigurationPart {
     /**
      * The template which will be used to generate a object
      */
-    private String postTempate;
+    private String postTemplate;
 
     private String license;
 
@@ -48,12 +48,12 @@ public class ImporterConfigurationPart {
         this.parentObject = parentObject;
     }
 
-    public String getPostTempate() {
-        return postTempate;
+    public String getPostTemplate() {
+        return postTemplate;
     }
 
-    public void setPostTempate(String postTempate) {
-        this.postTempate = postTempate;
+    public void setPostTemplate(String postTemplate) {
+        this.postTemplate = postTemplate;
     }
 
     public String getLicense() {

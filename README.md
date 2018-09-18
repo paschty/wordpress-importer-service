@@ -18,7 +18,7 @@ The configuration should be present in the `.wpimport/` directory of the executi
       "blog": "https://verfassungsblog.de/",
       "repository": "http://localhost:8291/mir/",
       "parentObject": "mir_mods_00000001",
-      "postTempate": "verfassungsblog.template.xml"
+      "postTemplate": "verfassungsblog.template.xml"
     }
   }
 }
