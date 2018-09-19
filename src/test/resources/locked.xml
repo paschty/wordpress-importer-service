@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><mycoreobject xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="datamodel-mods.xsd" ID="mir_mods_00003911" label="mir_mods_00003911" version="2017.06.0.1-SNAPSHOT">
+  <structure>
+    <parents class="MCRMetaLinkID">
+      <parent inherited="0" xlink:type="locator" xlink:href="mir_mods_00000217"/>
+    </parents>
+    <derobjects xmlns:mods="http://www.loc.gov/mods/v3"><derobject inherited="0" xlink:type="locator" xlink:title="data object from mir_mods_00003911" xlink:href="mir_derivate_00003651"/></derobjects>
+  </structure>
+  <metadata>
+    <def.modsContainer class="MCRMetaXML" heritable="false" notinherit="true">
+      <modsContainer inherited="0">
+        <mods:mods xmlns:mods="http://www.loc.gov/mods/v3">
+          <mods:genre type="intern" authorityURI="http://www.mycore.org/classifications/mir_genres" valueURI="http://www.mycore.org/classifications/mir_genres#blog_entry"/>
+          <mods:typeOfResource>text</mods:typeOfResource>
+          <mods:classification generator="mir_genres2marcgt-mycore" authority="marcgt">article</mods:classification>
+          <mods:classification generator="mir_genres2diniPublType-mycore" authorityURI="http://www.mycore.org/classifications/diniPublType" valueURI="http://www.mycore.org/classifications/diniPublType#article"/>
+          <mods:titleInfo xml:lang="de" xlink:type="simple">
+            <mods:title>Drawing Red Lines With No (Significant) Bite</mods:title>
+            <mods:subTitle>Why an Individual Test Is Not Appropriate in the LM Case</mods:subTitle>
+          </mods:titleInfo>
+          <mods:name type="personal" xlink:type="simple">
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:displayForm>Frąckowiak-Adamska, Agnieszka</mods:displayForm>
+            <mods:namePart type="family">Frąckowiak-Adamska</mods:namePart>
+            <mods:namePart type="given">Agnieszka</mods:namePart>
+          </mods:name>
+          <mods:identifier type="doi">10.17176/20180730-104735-0</mods:identifier>
+          <mods:originInfo eventType="publication">
+            <mods:dateIssued encoding="w3cdtf">2018-07-30</mods:dateIssued>
+          </mods:originInfo>
+          <mods:language>
+            <mods:languageTerm authority="rfc5646" type="code">en</mods:languageTerm>
+          </mods:language>
+          <mods:classification authorityURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik" displayLabel="intr2dok" valueURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik#euro"/>
+          <mods:classification authority="ddc" displayLabel="ddc">340</mods:classification>
+          <mods:accessCondition type="use and reproduction" xlink:href="http://www.mycore.org/classifications/mir_licenses#cc_by-nc-nd_4.0" xlink:type="simple"/>
+          <mods:relatedItem type="host" xlink:href="mir_mods_00000217" xlink:type="simple">
+            <mods:classification generator="mir_genres2marcgt-mycore" authority="marcgt">series</mods:classification>
+            <mods:classification generator="mir_genres2diniPublType-mycore" authorityURI="http://www.mycore.org/classifications/diniPublType" valueURI="http://www.mycore.org/classifications/diniPublType#other"/>
+            <mods:titleInfo xml:lang="de" xlink:type="simple">
+              <mods:title>Verfassungsblog: On Matters Constitutional</mods:title>
+            </mods:titleInfo>
+            <mods:identifier type="issn">2366-7044</mods:identifier>
+            <mods:location>
+              <mods:url access="raw object">http://verfassungsblog.de/</mods:url>
+            </mods:location>
+            <mods:genre type="intern" authorityURI="http://www.mycore.org/classifications/mir_genres" valueURI="http://www.mycore.org/classifications/mir_genres#blog"/>
+            <mods:typeOfResource>text</mods:typeOfResource>
+            <mods:name type="personal" xlink:type="simple">
+              <mods:nameIdentifier typeURI="http://d-nb.info/gnd/" type="gnd">124886647</mods:nameIdentifier>
+              <mods:displayForm>Steinbeis, Maximilian</mods:displayForm>
+              <mods:role>
+                <mods:roleTerm authority="marcrelator" type="code">aut</mods:roleTerm>
+              </mods:role>
+              <mods:namePart type="family">Steinbeis</mods:namePart>
+              <mods:namePart type="given">Maximilian</mods:namePart>
+            </mods:name>
+            <mods:originInfo eventType="publication">
+              <mods:dateIssued encoding="w3cdtf">2011</mods:dateIssued>
+            </mods:originInfo>
+            <mods:language>
+              <mods:languageTerm authority="rfc5646" type="code">de</mods:languageTerm>
+            </mods:language>
+            <mods:classification authorityURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik" displayLabel="intr2dok" valueURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik#idiszi_2"/>
+            <mods:classification authority="ddc" displayLabel="ddc">342</mods:classification>
+            <mods:accessCondition type="use and reproduction" xlink:href="http://www.mycore.org/classifications/mir_licenses#cc_by-nc-nd_4.0" xlink:type="simple"/>
+          </mods:relatedItem>
+          <mods:note type="admin" xlink:type="simple">Doublette von https://doi.org/10.17176/20180730-102416-0</mods:note>
+        </mods:mods>
+      </modsContainer>
+    </def.modsContainer>
+  </metadata>
+  <service>
+    <servdates class="MCRMetaISO8601Date">
+      <servdate type="modifydate" inherited="0">2018-09-03T20:36:07.012Z</servdate>
+      <servdate type="createdate" inherited="0">2018-07-30T08:47:35.236Z</servdate>
+    </servdates>
+    <servflags class="MCRMetaLangText">
+      <servflag type="createdby" inherited="0" form="plain">verfassungsblog</servflag>
+      <servflag type="MyCoRe-PI" inherited="0" form="plain">{"identifier":"10.17176/20180730-104735-0","type":"doi","additional":"","service":"Datacite","created":"2018-07-30T08:48:02.085Z","registered":"2018-07-30T08:48:02.085Z"}</servflag>
+      <servflag type="modifiedby" inherited="0" form="plain">administrator</servflag>
+    </servflags>
+    <servstates class="MCRMetaClassification">
+      <servstate inherited="0" classid="state" categid="blocked"/>
+    </servstates>
+  </service>
+</mycoreobject>

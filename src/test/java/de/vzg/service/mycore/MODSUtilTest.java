@@ -43,4 +43,12 @@ public class MODSUtilTest {
         final String fulltextURL = MODSUtil.getFulltextURL(document).get();
         Assert.assertEquals("URLs should be same!", EXPECTED_URL, fulltextURL);
     }
+
+    @org.junit.Test
+    public void isLockedOrDeleted() throws IOException, JDOMException {
+        final Document document = readDocument("locked.xml");
+        final Document document2 = readDocument("test_children.xml");
+        Assert.assertTrue("Should be locked!", MODSUtil.isLockedOrDeleted(document));
+        Assert.assertTrue("Should not be locked!", !MODSUtil.isLockedOrDeleted(document2));
+    }
 }

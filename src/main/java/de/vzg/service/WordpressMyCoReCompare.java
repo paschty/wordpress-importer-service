@@ -52,14 +52,16 @@ public class WordpressMyCoReCompare {
             String child = children.get(i);
             final Document childDoc = mcrStore.getObject(child);
             final Optional<String> fulltextURL = MODSUtil.getFulltextURL(childDoc);
-            if (fulltextURL.isPresent()) {
-                if (notImported.containsKey(fulltextURL.get())) {
-                    final Post post = notImported.remove(fulltextURL.get());
-                    comparingResult.getMyCoReIDPostMap().put(child,getInfo(post));
+            if(!MODSUtil.isLockedOrDeleted(childDoc)) {
+                if (fulltextURL.isPresent()) {
+                    if (notImported.containsKey(fulltextURL.get())) {
+                        final Post post = notImported.remove(fulltextURL.get());
+                        comparingResult.getMyCoReIDPostMap().put(child, getInfo(post));
+                    }
+                } else {
+                    mycoreIDValidationMap.put(child, "URL zum Blog ist nicht eingetragen!");
+                    LOGGER.warn("{} has no url to a blog post!", child);
                 }
-            } else {
-                mycoreIDValidationMap.put(child, "URL zum Blog ist nicht eingetragen!");
-                LOGGER.warn("{} has no url to a blog post!", child);
             }
         }
 
