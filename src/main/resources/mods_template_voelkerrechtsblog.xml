@@ -30,13 +30,13 @@
           <mods:language>
             <mods:languageTerm authority="rfc5646" type="code">en</mods:languageTerm>
           </mods:language>
-          <mods:classification authorityURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik" displayLabel="intr2dok" valueURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik#idiszi_2"/>
+          <mods:classification authorityURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik" displayLabel="intr2dok" valueURI="http://intr2dok.vifa-recht.de/classifications/intr2dok_systematik#inter"/>
           <mods:classification authority="ddc" displayLabel="ddc">341</mods:classification>
           <mods:accessCondition type="use and reproduction" xlink:href="http://www.mycore.org/classifications/mir_licenses#cc_by-sa_4.0" xlink:type="simple"/>
           <mods:relatedItem type="host" xlink:href="parent" xlink:type="simple">
           </mods:relatedItem>
           <mods:location>
-            <mods:url></mods:url>
+            <mods:url access="raw object"></mods:url>
           </mods:location>
         </mods:mods>
       </modsContainer>

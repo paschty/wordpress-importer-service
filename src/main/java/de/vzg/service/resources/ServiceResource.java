@@ -4,6 +4,7 @@ import de.vzg.service.Post2ModsConverter;
 import de.vzg.service.WordpressMyCoReCompare;
 import de.vzg.service.configuration.ImporterConfiguration;
 import de.vzg.service.configuration.ImporterConfigurationPart;
+import de.vzg.service.mycore.LocalMyCoReObjectStore;
 import de.vzg.service.wordpress.LocalPostStore;
 import de.vzg.service.wordpress.Post2PDFConverter;
 import de.vzg.service.wordpress.PostFetcher;
@@ -67,6 +68,16 @@ public class ServiceResource {
             config.getPostTemplate()).getMods();
 
         return new XMLOutputter().outputString(mods);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    @Path("revalidate/{config}/{id}")
+    public String revalidateMyCoReID(@PathParam("config") String configName, String id){
+        final ImporterConfigurationPart config = ImporterConfiguration.getConfiguration().getParts()
+            .get(configName);
+        LocalMyCoReObjectStore.getInstance(config.getRepository()).update(true);
+        return "{}";
     }
 
     @GET

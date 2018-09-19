@@ -36,7 +36,7 @@
           <mods:relatedItem type="host" xlink:href="parent" xlink:type="simple">
           </mods:relatedItem>
           <mods:location>
-            <mods:url></mods:url>
+            <mods:url access="raw object"></mods:url>
           </mods:location>
         </mods:mods>
       </modsContainer>

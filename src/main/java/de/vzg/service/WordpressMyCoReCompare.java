@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ public class WordpressMyCoReCompare {
         final LocalMyCoReObjectStore mcrStore = LocalMyCoReObjectStore.getInstance(config.getRepository());
         final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog());
         final List<Post> allPosts = postStore.getAllPosts();
+        final Map<String, String> mycoreIDValidationMap = comparingResult.getMycoreIDValidationMap();
         final HashMap<String, Post> notImported = new HashMap<>();
 
         for (Post cur : allPosts) {
@@ -56,6 +58,7 @@ public class WordpressMyCoReCompare {
                     comparingResult.getMyCoReIDPostMap().put(child,getInfo(post));
                 }
             } else {
+                mycoreIDValidationMap.put(child, "URL zum Blog ist nicht eingetragen!");
                 LOGGER.warn("{} has no url to a blog post!", child);
             }
         }
