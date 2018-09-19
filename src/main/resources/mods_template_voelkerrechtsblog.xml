@@ -35,11 +35,6 @@
           <mods:accessCondition type="use and reproduction" xlink:href="http://www.mycore.org/classifications/mir_licenses#cc_by-sa_4.0" xlink:type="simple"/>
           <mods:relatedItem type="host" xlink:href="parent" xlink:type="simple">
           </mods:relatedItem>
-          <mods:name type="corporate" authorityURI="http://www.mycore.org/classifications/mir_institutes" valueURI="http://www.mycore.org/classifications/mir_institutes#449a8809-4804-46d3-ba85-e69968af40e6" xlink:type="simple">
-            <mods:role>
-              <mods:roleTerm authority="marcrelator" type="code">his</mods:roleTerm>
-            </mods:role>
-          </mods:name>
           <mods:location>
             <mods:url></mods:url>
           </mods:location>
