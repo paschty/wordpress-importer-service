@@ -26,8 +26,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   =======================================================================-->
 
   <!-- page size -->
-  <xsl:param name="page-width">auto</xsl:param>
-  <xsl:param name="page-height">auto</xsl:param>
+  <xsl:param name="page-width">21cm</xsl:param>
+  <xsl:param name="page-height">29.7cm</xsl:param>
   <xsl:param name="page-margin-top">1in</xsl:param>
   <xsl:param name="page-margin-bottom">1in</xsl:param>
   <xsl:param name="page-margin-left">1in</xsl:param>
@@ -462,10 +462,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-->
 
   <xsl:attribute-set name="img">
+    <xsl:attribute name="inline-progression-dimension.maximum">100%</xsl:attribute>
+    <xsl:attribute name="width">100%</xsl:attribute>
+    <xsl:attribute name="content-height">scale-down-to-fit</xsl:attribute>
+    <xsl:attribute name="content-width">scale-down-to-fit</xsl:attribute>
+    <xsl:attribute name="scaling">uniform</xsl:attribute>
   </xsl:attribute-set>
 
-  <xsl:attribute-set name="img-link">
-    <xsl:attribute name="border">2px solid</xsl:attribute>
+  <xsl:attribute-set name="img-link" use-attribute-sets="img">
+    <xsl:attribute name="border">none</xsl:attribute>
   </xsl:attribute-set>
 
   <!--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
