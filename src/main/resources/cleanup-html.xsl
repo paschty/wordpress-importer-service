@@ -11,6 +11,8 @@
     </xsl:copy>
   </xsl:template>
 
+  <xsl:key name="names" match="@name" use="." />
+
   <xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
   <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
 
@@ -54,5 +56,11 @@
   </xsl:template>
 
   <xsl:template match="html:a/@href"></xsl:template>
+
+  <xsl:template match="@name">
+    <xsl:if test="generate-id(.)=generate-id(key('names', .)[1])">
+      <xsl:copy-of select="." />
+    </xsl:if>
+  </xsl:template>
 
 </xsl:stylesheet>
