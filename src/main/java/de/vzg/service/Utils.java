@@ -9,10 +9,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.jsoup.Jsoup;
+
+import de.vzg.service.wordpress.model.Post;
+
 public class Utils {
     public static String getFixedURL(String urlToInstance) {
         if(urlToInstance.startsWith("http:")){
-            urlToInstance = urlToInstance.replace("http:", "https:");
+            urlToInstance = urlToInstance.replace("http:", "http:");
         }
         if (!urlToInstance.endsWith("/")) {
             urlToInstance += "/";
@@ -37,5 +41,11 @@ public class Utils {
 
     public static Date getWPDate(String date) throws ParseException {
         return WP_DATE.parse(date);
+    }
+
+    public static String getTitleFileName(Post post) {
+        return Jsoup.parseBodyFragment(post.getTitle().getRendered()).text()
+            .replaceAll("[ ]", "_")
+            .replaceAll("[^a-zA-Z0-9_]", "")+".pdf";
     }
 }

@@ -1,15 +1,5 @@
 package de.vzg.service.resources;
 
-import de.vzg.service.Post2ModsConverter;
-import de.vzg.service.WordpressMyCoReCompare;
-import de.vzg.service.configuration.ImporterConfiguration;
-import de.vzg.service.configuration.ImporterConfigurationPart;
-import de.vzg.service.mycore.LocalMyCoReObjectStore;
-import de.vzg.service.wordpress.LocalPostStore;
-import de.vzg.service.wordpress.Post2PDFConverter;
-import de.vzg.service.wordpress.PostFetcher;
-import de.vzg.service.wordpress.model.Post;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -28,9 +18,22 @@ import org.apache.fop.apps.FOPException;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.output.XMLOutputter;
-import org.jsoup.Jsoup;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import de.vzg.service.Post2ModsConverter;
+import de.vzg.service.Utils;
+import de.vzg.service.WordpressMyCoReCompare;
+import de.vzg.service.configuration.ImporterConfiguration;
+import de.vzg.service.configuration.ImporterConfigurationPart;
+import de.vzg.service.mycore.LocalMyCoReObjectStore;
+import de.vzg.service.wordpress.LocalPostStore;
+import de.vzg.service.wordpress.Post2PDFConverter;
+import de.vzg.service.wordpress.PostFetcher;
+import de.vzg.service.wordpress.model.Post;
 
 @Path("/")
 public class ServiceResource {
@@ -38,9 +41,19 @@ public class ServiceResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("config")
-    public String getConfigurations(){
+    public String getConfigurations() throws NoSuchFieldException {
         final Map<String, ImporterConfigurationPart> configParts = ImporterConfiguration.getConfiguration().getParts();
-        return new Gson().toJson(configParts);
+        GsonBuilder g = new GsonBuilder();
+        g.addSerializationExclusionStrategy(new ExclusionStrategy() {
+            @Override public boolean shouldSkipField(FieldAttributes f) {
+                return f.getName().equals("password") || f.getName().equals("username");
+            }
+
+            @Override public boolean shouldSkipClass(Class<?> clazz) {
+                return false;
+            }
+        });
+        return g.create().toJson(configParts);
     }
 
     @GET
@@ -94,13 +107,9 @@ public class ServiceResource {
             } catch (FOPException | TransformerException | URISyntaxException e) {
                 throw new RuntimeException("Error while generating PDF!", e);
             }
-        }).header("Content-Disposition", "attachment; filename=\"" + getTitleFileName(post) + ".pdf\"").build();
+        }).header("Content-Disposition", "attachment; filename=\"" + Utils.getTitleFileName(post) + "\"").build();
     }
 
-    private String getTitleFileName(Post post) {
-        return Jsoup.parseBodyFragment(post.getTitle().getRendered()).text()
-            .replaceAll("[ ]", "_")
-            .replaceAll("[^a-zA-Z0-9_]", "");
-    }
+
 
 }

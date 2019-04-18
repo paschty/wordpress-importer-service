@@ -18,6 +18,21 @@ public class ImporterConfigurationPart {
     private String parentObject;
 
     /**
+     * Post will be automatic imported every day
+     */
+    private boolean auto;
+
+    /**
+     * The username of the user on which behalf the posts should be imported
+     */
+    private String username;
+
+    /**
+     * The password of the user on which behalf the posts should be imported
+     */
+    private String password;
+
+    /**
      * The template which will be used to generate a object
      */
     private String postTemplate;
@@ -62,5 +77,29 @@ public class ImporterConfigurationPart {
 
     public void setLicense(String license) {
         this.license = license;
+    }
+
+    public boolean isAuto() {
+        return auto;
+    }
+
+    public void setAuto(boolean auto) {
+        this.auto = auto;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

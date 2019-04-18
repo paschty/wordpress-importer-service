@@ -90,7 +90,7 @@ public class LocalMyCoReObjectStore {
             LOGGER.debug("Fetching {}", id);
             return ObjectFetcher.fetchObject(repoUrl, id);
         } catch (IOException | JDOMException e) {
-            throw new RuntimeException("Could not fetch MODS!", e);
+            throw new RuntimeException("Could not fetch MODS " + id + "!", e);
         }
     }
 
