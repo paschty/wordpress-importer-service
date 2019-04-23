@@ -1,5 +1,14 @@
 package de.vzg.service;
 
+import de.vzg.service.configuration.ImporterConfiguration;
+import de.vzg.service.configuration.ImporterConfigurationPart;
+import de.vzg.service.mycore.AuthApiResponse;
+import de.vzg.service.mycore.LocalMyCoReObjectStore;
+import de.vzg.service.mycore.MCRObjectIngester;
+import de.vzg.service.wordpress.LocalPostStore;
+import de.vzg.service.wordpress.Post2PDFConverter;
+import de.vzg.service.wordpress.model.Post;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -12,6 +21,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import javax.xml.transform.TransformerException;
 
 import org.apache.fop.apps.FOPException;
@@ -22,43 +34,16 @@ import org.jdom2.JDOMException;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import de.vzg.service.configuration.ImporterConfiguration;
-import de.vzg.service.configuration.ImporterConfigurationPart;
-import de.vzg.service.mycore.AuthApiResponse;
-import de.vzg.service.mycore.LocalMyCoReObjectStore;
-import de.vzg.service.mycore.MCRObjectIngester;
-import de.vzg.service.wordpress.LocalPostStore;
-import de.vzg.service.wordpress.Post2PDFConverter;
-import de.vzg.service.wordpress.model.Post;
-
-public class WordpressAutoImporter implements Runnable {
+@WebListener
+public class WordpressAutoImporter implements Runnable, ServletContextListener {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static ScheduledThreadPoolExecutor EXECUTOR;
 
-    private WordpressAutoImporter() {
-        EXECUTOR = new ScheduledThreadPoolExecutor(1);
-        final ScheduledFuture<?> scheduledFuture = EXECUTOR.scheduleAtFixedRate(this, 0, 12, TimeUnit.HOURS);
-        new Thread(() -> {
-            while (true) {
-                try {
-                    scheduledFuture.get();
-                } catch (ExecutionException | InterruptedException e) {
-                    LOGGER.error("Error ", e);
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                }
-            }
-        }).start();
+    private Thread CHECK_THREAD;
 
-    }
-
-    public static WordpressAutoImporter getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
+    private boolean shouldRun;
 
     @Override
     public void run() {
@@ -160,8 +145,32 @@ public class WordpressAutoImporter implements Runnable {
         }
     }
 
-    private static final class InstanceHolder {
-        protected static final WordpressAutoImporter INSTANCE = new WordpressAutoImporter();
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        LOGGER.info("Starting Auto-Import!");
+        EXECUTOR = new ScheduledThreadPoolExecutor(1);
+        final ScheduledFuture<?> scheduledFuture = EXECUTOR.scheduleAtFixedRate(this, 0, 12, TimeUnit.HOURS);
+        CHECK_THREAD = new Thread(() -> {
+            shouldRun = true;
+            while (shouldRun) {
+                try {
+                    scheduledFuture.get();
+                } catch (ExecutionException | InterruptedException e) {
+                    LOGGER.error("Error ", e);
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+            }
+        });
+        CHECK_THREAD.start();
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        shouldRun = false;
+        EXECUTOR.shutdownNow();
     }
 
 }

@@ -14,7 +14,5 @@ public class WordpressImporterApplication extends ResourceConfig {
     public WordpressImporterApplication() {
         LOGGER.info("Initializing " + this.getClass().getName());
         packages("de.vzg.service.resources");
-
-        WordpressAutoImporter.getInstance();
     }
 }
