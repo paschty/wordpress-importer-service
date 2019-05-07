@@ -44,7 +44,7 @@
   </metadata>
   <service>
     <servstates class="MCRMetaClassification">
-      <servstate inherited="0" classid="state" categid="published"/>
+      <servstate inherited="0" classid="state" categid="imported"/>
     </servstates>
   </service>
 </mycoreobject>
