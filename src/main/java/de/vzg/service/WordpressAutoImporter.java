@@ -142,6 +142,8 @@ public class WordpressAutoImporter implements Runnable, ServletContextListener {
                     LOGGER.info("Continue with next post!");
                 }
             }
+
+            LocalMyCoReObjectStore.getInstance(config.getRepository()).update(true);
         }
     }
 
