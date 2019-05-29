@@ -47,103 +47,108 @@ public class WordpressAutoImporter implements Runnable, ServletContextListener {
 
     @Override
     public void run() {
-        final Map<String, ImporterConfigurationPart> configurationPartMap = ImporterConfiguration.getConfiguration()
-            .getParts();
-        final Set<String> configs = configurationPartMap.keySet();
+        try {
+            final Map<String, ImporterConfigurationPart> configurationPartMap = ImporterConfiguration.getConfiguration()
+                .getParts();
+            final Set<String> configs = configurationPartMap.keySet();
 
-        final List<String> autoConfigurations = configs.stream()
-            .filter(configName -> configurationPartMap.get(configName).isAuto()).collect(Collectors.toList());
+            final List<String> autoConfigurations = configs.stream()
+                .filter(configName -> configurationPartMap.get(configName).isAuto()).collect(Collectors.toList());
 
-        for (final String configurationName : autoConfigurations) {
-            final ImporterConfigurationPart config = configurationPartMap.get(configurationName);
-            LOGGER.info("running import for configuration {}", configurationName);
+            for (final String configurationName : autoConfigurations) {
+                final ImporterConfigurationPart config = configurationPartMap.get(configurationName);
+                LOGGER.info("running import for configuration {}", configurationName);
 
-            LocalMyCoReObjectStore.getInstance(config.getRepository()).update(true);
-            final WordpressMyCoReCompare wordpressMyCoReCompare = new WordpressMyCoReCompare(config);
+                LocalMyCoReObjectStore.getInstance(config.getRepository()).update(true);
+                final WordpressMyCoReCompare wordpressMyCoReCompare = new WordpressMyCoReCompare(config);
 
-            final WordpressMyCoReComparingResult compare;
-            try {
-                compare = wordpressMyCoReCompare.compare();
-            } catch (IOException | JDOMException e) {
-                LOGGER.error("Error while comparing posts for configuration: " + configurationName, e);
-                LOGGER.info("Continue with next configuration!");
-                continue;
-            }
-
-            final List<PostInfo> notImportedPosts = compare.getNotImportedPosts();
-
-            for (PostInfo postInfo : notImportedPosts) {
-                LOGGER.info("Import the post with id: {}  title: {} and url: {}", postInfo.getId(), postInfo.getTitle(),
-                    postInfo.getUrl());
-
-                String loginToken;
-
+                final WordpressMyCoReComparingResult compare;
                 try {
-                    final AuthApiResponse authApiResponse = MCRObjectIngester
-                        .login(config.getRepository(), config.getUsername(), config.getPassword());
-
-                    loginToken = authApiResponse.getToken_type() + " " + authApiResponse.getAccess_token();
-                } catch (IOException | URISyntaxException e) {
-                    LOGGER.error("Error while login to repository: " + config.getRepository(), e);
+                    compare = wordpressMyCoReCompare.compare();
+                } catch (IOException | JDOMException e) {
+                    LOGGER.error("Error while comparing posts for configuration: " + configurationName, e);
                     LOGGER.info("Continue with next configuration!");
                     continue;
                 }
 
-                final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog());
-                final Post post = postStore.getPost(postInfo.getId());
-                final Document mods = new Post2ModsConverter(post,
-                    config.getParentObject(),
-                    config.getBlog(),
-                    config.getPostTemplate())
-                    .getMods();
+                final List<PostInfo> notImportedPosts = compare.getNotImportedPosts();
 
-                final ByteArrayOutputStream pdfDocumentStream = new ByteArrayOutputStream();
-                try {
-                    new Post2PDFConverter()
-                        .getPDF(post, pdfDocumentStream, config.getBlog(), config.getLicense());
-                } catch (FOPException | IOException | URISyntaxException | TransformerException e) {
-                    LOGGER.error("Error while generating PDF for post ID: " + post.getId() + " LINK: " + post.getLink(),
-                        e);
-                    LOGGER.info("Continue with next post!");
-                    continue;
-                }
+                for (PostInfo postInfo : notImportedPosts) {
+                    LOGGER.info("Import the post with id: {}  title: {} and url: {}", postInfo.getId(), postInfo.getTitle(),
+                        postInfo.getUrl());
 
-                final String objectID;
-                try {
-                    objectID = MCRObjectIngester.ingestObject(config.getRepository(), loginToken, mods);
-                } catch (IOException e) {
-                    final String modsAsString = new XMLOutputter(Format.getPrettyFormat()).outputString(mods);
-                    LOGGER.error("Error while ingesting mods: " + modsAsString + " \n to " + config.getRepository(), e);
-                    LOGGER.info("Continue with next post!");
-                    continue;
-                }
-                final String derivateID;
-                try {
+                    String loginToken;
 
-                    derivateID = MCRObjectIngester
-                        .createDerivate(config.getRepository(),
+                    try {
+                        final AuthApiResponse authApiResponse = MCRObjectIngester
+                            .login(config.getRepository(), config.getUsername(), config.getPassword());
+
+                        loginToken = authApiResponse.getToken_type() + " " + authApiResponse.getAccess_token();
+                    } catch (IOException | URISyntaxException e) {
+                        LOGGER.error("Error while login to repository: " + config.getRepository(), e);
+                        LOGGER.info("Continue with next configuration!");
+                        continue;
+                    }
+
+                    final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog());
+                    final Post post = postStore.getPost(postInfo.getId());
+                    final Document mods = new Post2ModsConverter(post,
+                        config.getParentObject(),
+                        config.getBlog(),
+                        config.getPostTemplate())
+                        .getMods();
+
+                    final ByteArrayOutputStream pdfDocumentStream = new ByteArrayOutputStream();
+                    try {
+                        new Post2PDFConverter()
+                            .getPDF(post, pdfDocumentStream, config.getBlog(), config.getLicense());
+                    } catch (FOPException | IOException | URISyntaxException | TransformerException e) {
+                        LOGGER.error("Error while generating PDF for post ID: " + post.getId() + " LINK: " + post.getLink(),
+                            e);
+                        LOGGER.info("Continue with next post!");
+                        continue;
+                    }
+
+                    final String objectID;
+                    try {
+                        objectID = MCRObjectIngester.ingestObject(config.getRepository(), loginToken, mods);
+                    } catch (IOException e) {
+                        final String modsAsString = new XMLOutputter(Format.getPrettyFormat()).outputString(mods);
+                        LOGGER.error("Error while ingesting mods: " + modsAsString + " \n to " + config.getRepository(), e);
+                        LOGGER.info("Continue with next post!");
+                        continue;
+                    }
+                    final String derivateID;
+                    try {
+
+                        derivateID = MCRObjectIngester
+                            .createDerivate(config.getRepository(),
+                                loginToken,
+                                objectID);
+                    } catch (IOException e) {
+                        LOGGER.error("Error while ingesting Derivate: " + post.getId() + "!", e);
+                        LOGGER.info("Continue with next post!");
+                        continue;
+                    }
+
+                    try {
+                        MCRObjectIngester.uploadFile(config.getRepository(),
                             loginToken,
-                            objectID);
-                } catch (IOException e) {
-                    LOGGER.error("Error while ingesting Derivate: " + post.getId() + "!", e);
-                    LOGGER.info("Continue with next post!");
-                    continue;
-                }
+                            derivateID,
+                            objectID,
+                            pdfDocumentStream.toByteArray(),
+                            Utils.getTitleFileName(post));
+                    } catch (IOException e) {
+                        LOGGER.error("Error while ingesting Derivate: " + post.getId() + "!", e);
+                        LOGGER.info("Continue with next post!");
+                    }
 
-                try {
-                    MCRObjectIngester.uploadFile(config.getRepository(),
-                        loginToken,
-                        derivateID,
-                        objectID,
-                        pdfDocumentStream.toByteArray(),
-                        Utils.getTitleFileName(post));
-                } catch (IOException e) {
-                    LOGGER.error("Error while ingesting Derivate: " + post.getId() + "!", e);
-                    LOGGER.info("Continue with next post!");
+                    LocalMyCoReObjectStore.getInstance(config.getRepository()).update(true);
                 }
             }
 
-            LocalMyCoReObjectStore.getInstance(config.getRepository()).update(true);
+        } catch (Throwable e) {
+            LOGGER.error("Error while running autoimporter!", e);
         }
     }
 
