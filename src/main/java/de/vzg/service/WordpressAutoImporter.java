@@ -41,10 +41,6 @@ public class WordpressAutoImporter implements Runnable, ServletContextListener {
 
     private static ScheduledThreadPoolExecutor EXECUTOR;
 
-    private Thread CHECK_THREAD;
-
-    private boolean shouldRun;
-
     @Override
     public void run() {
         try {
@@ -156,27 +152,11 @@ public class WordpressAutoImporter implements Runnable, ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         LOGGER.info("Starting Auto-Import!");
         EXECUTOR = new ScheduledThreadPoolExecutor(1);
-        final ScheduledFuture<?> scheduledFuture = EXECUTOR.scheduleAtFixedRate(this, 1, 12*60, TimeUnit.MINUTES);
-        CHECK_THREAD = new Thread(() -> {
-            shouldRun = true;
-            while (shouldRun) {
-                try {
-                    scheduledFuture.get();
-                } catch (ExecutionException | InterruptedException e) {
-                    LOGGER.error("Error ", e);
-                }
-                try {
-                    Thread.sleep(scheduledFuture.getDelay(TimeUnit.MILLISECONDS));
-                } catch (InterruptedException e) {
-                }
-            }
-        });
-        CHECK_THREAD.start();
+        EXECUTOR.scheduleAtFixedRate(this, 1, 12*60, TimeUnit.MINUTES);
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        shouldRun = false;
         EXECUTOR.shutdownNow();
     }
 
