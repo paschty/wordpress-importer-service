@@ -115,10 +115,10 @@ public class LocalMyCoReObjectStore {
                     }
 
                     if (lastModified.getTime() > lastCheckDate.getTime()) {
-                        LOGGER.info("{} needs update {}<{}", id, lastCheckDate.getTime(), lastModified.getTime());
+                        LOGGER.debug("{} needs update {}<{}", id, lastCheckDate.getTime(), lastModified.getTime());
                         this.idXMLMap.put(id, fetchObject(id));
                     } else {
-                        LOGGER.info("{} needs no update {}>={}", id, lastCheckDate.getTime(), lastModified.getTime());
+                        LOGGER.debug("{} needs no update {}>={}", id, lastCheckDate.getTime(), lastModified.getTime());
 
                     }
                 }
@@ -126,7 +126,7 @@ public class LocalMyCoReObjectStore {
             lastCheckDate = date;
             saveToFile();
         } else {
-            LOGGER.info("No update needed! {}<{}", new Date().getTime() - lastCheckDate.getTime(), FIFTEEN_MINUTES);
+            LOGGER.debug("No update needed! {}<{}", new Date().getTime() - lastCheckDate.getTime(), FIFTEEN_MINUTES);
         }
     }
 
