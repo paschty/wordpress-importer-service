@@ -18,9 +18,6 @@
 
 package de.vzg.service.wordpress;
 
-import de.vzg.service.Utils;
-import de.vzg.service.wordpress.model.Post;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,6 +38,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
+
+import de.vzg.service.Utils;
+import de.vzg.service.wordpress.model.Post;
 
 public class PostFetcher {
 
@@ -90,9 +90,13 @@ public class PostFetcher {
                 try (final InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
                     final List<Post> posts = Arrays.asList(new Gson().fromJson(isr, Post[].class));
                     for(Post modifiedPost:posts){
+                        LOGGER.info("Fetching: {}", modifiedPost.getTitle().getRendered());
                         lastModified = Utils.getWPDate(modifiedPost.getModified());
                         if(lastModified.getTime()>=until.getTime()){
-                         postsUntil.add(modifiedPost);
+                            postsUntil.add(modifiedPost);
+                        } else {
+                            LOGGER.info("Post is old: {} {}>={}", modifiedPost.getTitle().getRendered(),
+                                lastModified.getTime(), until.getTime());
                         }
                     }
                 } catch (ParseException e) {

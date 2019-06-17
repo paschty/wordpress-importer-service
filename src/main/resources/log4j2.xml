@@ -21,5 +21,7 @@
       <!-- Use FLOW to trace down exact method sending the msg -->
       <!-- <AppenderRef ref="FLOW" /> -->
     </Root>
+    <logger name="org.apache.fop" level="error" />
+    <logger name="de.vzg.service.wordpress.Post2PDFConverter" level="error" />
   </Loggers>
 </Configuration>
