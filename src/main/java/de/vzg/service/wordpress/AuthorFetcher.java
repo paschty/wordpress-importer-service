@@ -15,29 +15,26 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 
 import de.vzg.service.Utils;
-import de.vzg.service.wordpress.model.User;
+import de.vzg.service.wordpress.model.Author;
 
-public class UserFetcher {
-
+public class AuthorFetcher {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final String V2_USER_PATH = "wp-json/wp/v2/users/";
+    private static final String V2_AUTHOR_PATH = "wp-json/wp/v2/authors/";
 
-
-    public static User fetchUser(String instanceURL, int id) throws IOException {
+    public static Author fetchAuthor(String instanceURL, int id) throws IOException {
         final HttpClient httpClient = HttpClientBuilder.create().build();
-        final String uri = Utils.getFixedURL(instanceURL) + V2_USER_PATH + id;
+        final String uri = Utils.getFixedURL(instanceURL) + V2_AUTHOR_PATH + id;
         LOGGER.debug("Fetching : {}", uri);
         final HttpGet get = new HttpGet(uri);
         final HttpResponse execute = httpClient.execute(get);
 
-        LOGGER.info("Fetch user " + instanceURL + " id " + id);
+        LOGGER.info("Fetch author " + instanceURL + " id " + id);
 
         try (final InputStream is = execute.getEntity().getContent()) {
             try (final InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                return new Gson().fromJson(isr, User.class);
+                return new Gson().fromJson(isr, Author.class);
             }
         }
     }
-
 }

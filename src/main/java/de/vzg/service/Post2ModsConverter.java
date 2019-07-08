@@ -1,14 +1,5 @@
 package de.vzg.service;
 
-import static de.vzg.service.mycore.MODSUtil.MODS_NAMESPACE;
-import static de.vzg.service.mycore.MODSUtil.XLINK_NAMESPACE;
-
-import de.vzg.service.configuration.ImporterConfiguration;
-import de.vzg.service.mycore.MODSUtil;
-import de.vzg.service.wordpress.UserFetcher;
-import de.vzg.service.wordpress.model.Post;
-import de.vzg.service.wordpress.model.User;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -17,9 +8,12 @@ import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.naming.ConfigurationException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -28,6 +22,16 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.jsoup.Jsoup;
+
+import de.vzg.service.configuration.ImporterConfiguration;
+import de.vzg.service.mycore.MODSUtil;
+import static de.vzg.service.mycore.MODSUtil.MODS_NAMESPACE;
+import static de.vzg.service.mycore.MODSUtil.XLINK_NAMESPACE;
+import de.vzg.service.wordpress.AuthorFetcher;
+import de.vzg.service.wordpress.UserFetcher;
+import de.vzg.service.wordpress.model.Author;
+import de.vzg.service.wordpress.model.Post;
+import de.vzg.service.wordpress.model.User;
 
 /**
  * Reads a template with a name from {@link ImporterConfiguration#getConfigPath()} and sets some values with xpath from
@@ -39,18 +43,15 @@ public class Post2ModsConverter {
 
     private static final String MODS_XPATH = "/mycoreobject/metadata/def.modsContainer/modsContainer/mods:mods";
 
-    private static final String TITLE_XPATH = MODS_XPATH + "/mods:titleInfo/mods:title";
+    public static final String MODS_TITLE_INFO = MODS_XPATH + "/mods:titleInfo";
 
-    private static final String SUB_TITLE_XPATH = MODS_XPATH + "/mods:titleInfo/mods:subTitle";
+    public static final Logger LOGGER = LogManager.getLogger();
 
-    private static final String AUTHOR_XPATH =
-        MODS_XPATH + "/mods:name"; // mods:displayForm & mods:namePart type="family" && mods:namePart type="given"
+    private static final String TITLE_XPATH = MODS_TITLE_INFO + "/mods:title";
 
-    private static final String DISPLAY_FORM = AUTHOR_XPATH + "/mods:displayForm";
+    private static final String SUB_TITLE_XPATH = MODS_TITLE_INFO + "/mods:subTitle";
 
-    private static final String FAMILY_NAME = AUTHOR_XPATH + "/mods:namePart[@type='family']";
 
-    private static final String GIVEN_NAME = AUTHOR_XPATH + "/mods:namePart[@type='given']";
 
     private static final String PUBLICATION_XPATH = MODS_XPATH + "/mods:originInfo[@eventType='publication']";
 
@@ -63,6 +64,16 @@ public class Post2ModsConverter {
     private static final String RELATED_PARENT_XPATH = MODS_XPATH + "/mods:relatedItem";
 
     private static final String URL_XPATH = MODS_XPATH + "/mods:location/mods:url";
+
+    private static final String AUTHOR_XPATH =
+        MODS_XPATH
+            + "/mods:name"; // mods:displayForm & mods:namePart type="family" && mods:namePart type="given"
+
+    private static final String DISPLAY_FORM = AUTHOR_XPATH + "/mods:displayForm";
+
+    private static final String FAMILY_NAME = AUTHOR_XPATH + "/mods:namePart[@type='family']";
+
+    private static final String GIVEN_NAME = AUTHOR_XPATH + "/mods:namePart[@type='given']";
 
     private final Post blogPost;
 
@@ -143,34 +154,90 @@ public class Post2ModsConverter {
         }
     }
 
-    private void setAuthor(){
-        final Element displayFormElement = getElement(DISPLAY_FORM);
-        final Element givenNameElement = getElement(GIVEN_NAME);
-        final Element familyNameElement = getElement(FAMILY_NAME);
+    private void setAuthors() {
+        final List<Integer> authors = blogPost.getAuthors();
+        final Element authorInTemplate = getElement(AUTHOR_XPATH);
 
-        final int author = blogPost.getAuthor();
+        if (authorInTemplate != null) {
+            authorInTemplate.getParentElement().removeContent(authorInTemplate);
+        }
+
+        if (authors != null && authors.size() > 0) {
+            authors.forEach(this::createAuthorFromAuthor);
+        } else {
+            createAuthorFromUser(blogPost.getAuthor());
+        }
+    }
+
+    private void createAuthorFromAuthor(Integer authorID) {
         try {
-            final User user = UserFetcher.fetchUser(blogURL, author);
-            final String nameDisplayForm = user.getName();
+            final Author author = AuthorFetcher.fetchAuthor(blogURL, authorID);
+            insertAuthor(author.getName());
+        } catch (IOException e) {
+            LOGGER.error("Error while fetching Author with ID " + authorID, e);
+        }
+    }
 
-            // only handles the form givenName familyName
-            if(nameDisplayForm.contains(" ")){
-                final String[] split = nameDisplayForm.split(" ",2);
+    private void createAuthorFromUser(Integer userID) {
+        try {
+            final User author = UserFetcher.fetchUser(blogURL, userID);
+            insertAuthor(author.getName());
+        } catch (IOException e) {
+            LOGGER.error("Error while fetching User with ID " + userID, e);
+        }
+    }
 
-                final String foreName = split[0];
-                final String sureName = split[1];
+    private void insertAuthor(String authorName) {
+        final Element modsName = new Element("name", MODS_NAMESPACE);
+        modsName.setAttribute("type", "personal");
+        modsName.setAttribute("type", "simple", XLINK_NAMESPACE);
 
-                givenNameElement.setText(foreName);
-                familyNameElement.setText(sureName);
+        final Element role = new Element("role", MODS_NAMESPACE);
+        modsName.addContent(role);
+
+        final Element roleTerm = new Element("roleTerm", MODS_NAMESPACE);
+        roleTerm.setAttribute("type", "code");
+        roleTerm.setAttribute("authority", "marcrelator");
+        roleTerm.setText("aut");
+        role.addContent(roleTerm);
+
+        final Element displayFormElement = new Element("displayForm", MODS_NAMESPACE);
+        modsName.addContent(displayFormElement);
+
+        final Element givenNameElement = new Element("namePart", MODS_NAMESPACE);
+        givenNameElement.setAttribute("type", "given");
+        modsName.addContent(givenNameElement);
+
+        final Element familyNameElement = new Element("namePart", MODS_NAMESPACE);
+        familyNameElement.setAttribute("type", "family");
+        modsName.addContent(familyNameElement);
+
+        final Element modsElement = getElement(MODS_XPATH);
+        modsElement.addContent(modsElement.indexOf(getElement(MODS_TITLE_INFO)) + 1, modsName);
+
+        // only handles the form givenName familyName
+        if (authorName.contains(" ")) {
+            final String[] split = authorName.split(" ", 3);
+                if(split.length==3){
+                    final String foreName = split[0] + " " + split[1];
+                    final String sureName = split[2];
+
+                    givenNameElement.setText(foreName);
+                    familyNameElement.setText(sureName);
+                } else {
+                    final String foreName = split[0];
+                    final String sureName = split[1];
+
+                    givenNameElement.setText(foreName);
+                    familyNameElement.setText(sureName);
+                }
             } else {
                 givenNameElement.getParent().removeContent(givenNameElement);
                 familyNameElement.getParent().removeContent(familyNameElement);
             }
 
-            displayFormElement.setText(nameDisplayForm);
-        } catch (IOException e) {
-            throw new RuntimeException("Error while fetching Author " + author, e);
-        }
+        displayFormElement.setText(authorName);
+
     }
 
     private void setParentID(){
@@ -183,14 +250,15 @@ public class Post2ModsConverter {
     }
 
     private Element getElement(final String xpath) {
-        final XPathExpression<Element> xpathFac = XPathFactory.instance().compile(xpath, Filters.element(), null, MODS_NAMESPACE);
+        final XPathExpression<Element> xpathFac = XPathFactory.instance()
+            .compile(xpath, Filters.element(), null, MODS_NAMESPACE, XLINK_NAMESPACE);
         return xpathFac.evaluateFirst(modsTemplate);
     }
 
     public Document getMods() {
         setTitle();
         setDateIssued();
-        setAuthor();
+        setAuthors();
         setParentID();
         setURL();
 

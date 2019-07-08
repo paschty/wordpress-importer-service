@@ -76,9 +76,9 @@ public class PostFetcher {
     public static Set<Post> fetchUntil(String instanceURL, Date until) throws IOException {
         final HttpClient httpClient = HttpClientBuilder.create().build();
         int pageCount = 999;
-        Date lastModified = null;
+        Date lastChanged = null;
         Set<Post> postsUntil = new HashSet<Post>();
-        for (int i = 1; i <= pageCount && (lastModified == null || lastModified.getTime() >= until.getTime()); i++) {
+        for (int i = 1; i <= pageCount && (lastChanged == null || lastChanged.getTime() >= until.getTime()); i++) {
             final String uri = buildURLForPage(instanceURL, i);
             LOGGER.debug("Fetching : {}", uri);
 
@@ -91,12 +91,19 @@ public class PostFetcher {
                     final List<Post> posts = Arrays.asList(new Gson().fromJson(isr, Post[].class));
                     for(Post modifiedPost:posts){
                         LOGGER.info("Fetching: {}", modifiedPost.getTitle().getRendered());
-                        lastModified = Utils.getWPDate(modifiedPost.getModified());
-                        if(lastModified.getTime()>=until.getTime()){
+                        Date lm = Utils.getWPDate(modifiedPost.getModified());
+                        Date published = Utils.getWPDate(modifiedPost.getDate());
+                        Date lastChangedIntern = lm.after(published) ? lm : published;
+
+                        if (lastChangedIntern.getTime() >= until.getTime()) {
                             postsUntil.add(modifiedPost);
                         } else {
-                            LOGGER.info("Post is old: {} {}>={}", modifiedPost.getTitle().getRendered(),
-                                lastModified.getTime(), until.getTime());
+                            LOGGER.info("Post({}) is old: {} {}>={}", modifiedPost.getId(),
+                                modifiedPost.getTitle().getRendered(),
+                                lastChangedIntern.getTime(), until.getTime());
+                        }
+                        if (lastChanged == null || lastChangedIntern.getTime() > lastChanged.getTime()) {
+                            lastChanged = lastChangedIntern;
                         }
                     }
                 } catch (ParseException e) {

@@ -5,8 +5,8 @@
   "guid": {
     "rendered": "https:\/\/verfassungsblog.de\/?p=35512"
   },
-  "modified": "2018-07-17T08:40:54",
-  "modified_gmt": "2018-07-17T06:40:54",
+  "modified": "2018-07-18T15:18:01",
+  "modified_gmt": "2018-07-18T13:18:01",
   "slug": "the-ecthr-and-post-coup-turkey-losing-ground-or-losing-credibility",
   "status": "publish",
   "type": "post",
@@ -72,7 +72,14 @@
     ],
     "version-history": [
       {
+        "count": 3,
         "href": "https:\/\/verfassungsblog.de\/wp-json\/wp\/v2\/posts\/35512\/revisions"
+      }
+    ],
+    "predecessor-version": [
+      {
+        "id": 35532,
+        "href": "https:\/\/verfassungsblog.de\/wp-json\/wp\/v2\/posts\/35512\/revisions\/35532"
       }
     ],
     "wp:attachment": [

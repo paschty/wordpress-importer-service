@@ -18,9 +18,6 @@
 
 package de.vzg.service.wordpress;
 
-import de.vzg.service.wordpress.model.Post;
-import de.vzg.service.wordpress.model.User;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +29,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -54,6 +53,9 @@ import org.apache.xmlgraphics.io.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.helpers.DefaultHandler;
+
+import de.vzg.service.wordpress.model.Author;
+import de.vzg.service.wordpress.model.Post;
 
 public class Post2PDFConverter {
 
@@ -128,8 +130,15 @@ public class Post2PDFConverter {
             htmlString += "<h2>" + post.getWps_subtitle() + "</h2>";
         }
 
-        final User user = UserFetcher.fetchUser(blog, post.getAuthor());
-        final String name = user.getName();
+        final List<Integer> authors = post.getAuthors();
+        final String name = authors != null && authors.size() > 0 ? authors.stream().map(authorID -> {
+            try {
+                return AuthorFetcher.fetchAuthor(blog, authorID);
+            } catch (IOException e) {
+                throw new RuntimeException("Error while fetching Author " + authorID, e);
+            }
+        }).map(Author::getName)
+            .collect(Collectors.joining(", ")) : UserFetcher.fetchUser(blog, post.getAuthor()).getName();
 
         htmlString += "<hr/><table border='0'><tr><td>" + name + "</td>";
         htmlString += "<td align='right'>" + post.getDate() + "</td></tr></table>";

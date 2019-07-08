@@ -25,11 +25,13 @@ public class Post {
 
     private int id, author;
 
+    private List<Integer> authors;
+
     private String wps_subtitle, date, date_gmt, modified, modified_gmt, slug, status, link, comment_status, ping_status, format;
 
     private PostContent title, content;
 
-    private List<Integer> categoeries, tags;
+    private List<Integer> categories, tags;
 
     private Map<String, String> guid;
 
@@ -145,12 +147,12 @@ public class Post {
         this.content = content;
     }
 
-    public List<Integer> getCategoeries() {
-        return categoeries;
+    public List<Integer> getCategories() {
+        return categories;
     }
 
-    public void setCategoeries(List<Integer> categoeries) {
-        this.categoeries = categoeries;
+    public void setCategories(List<Integer> categories) {
+        this.categories = categories;
     }
 
     public List<Integer> getTags() {
@@ -185,7 +187,7 @@ public class Post {
             ", format='" + format + '\'' +
             ", title=" + title +
             ", content=" + content +
-            ", categoeries=" + categoeries +
+            ", categories=" + categories +
             ", tags=" + tags +
             '}';
     }
@@ -196,5 +198,13 @@ public class Post {
 
     public void setGuid(Map<String, String> guid) {
         this.guid = guid;
+    }
+
+    public List<Integer> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<Integer> authors) {
+        this.authors = authors;
     }
 }
