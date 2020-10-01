@@ -124,7 +124,7 @@ public class PostFetcher {
         return postsUntil;
     }
 
-    private static Gson getGson() {
+    public static Gson getGson() {
         return new GsonBuilder().registerTypeAdapter(MayAuthorList.class, new FailSafeAuthorsDeserializer()).create();
     }
 
