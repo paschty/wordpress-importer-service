@@ -41,6 +41,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import de.vzg.service.wordpress.model.MayAuthorList;
 import de.vzg.service.wordpress.model.PostContent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -134,7 +135,10 @@ public class Post2PDFConverter {
             htmlString += "<h2>" + post.getWps_subtitle() + "</h2>";
         }
 
-        final List<Integer> authors = post.getAuthors().getAuthorIds();
+        final List<Integer> authors = Optional.ofNullable(post.getAuthors())
+                .orElse(new MayAuthorList())
+                .getAuthorIds();
+
         final String name = authors != null && authors.size() > 0 ? authors.stream().map(authorID -> {
             try {
                 return AuthorFetcher.fetchAuthor(blog, authorID);
