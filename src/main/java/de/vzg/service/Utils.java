@@ -16,7 +16,7 @@ import de.vzg.service.wordpress.model.Post;
 public class Utils {
     public static String getFixedURL(String urlToInstance) {
         if(urlToInstance.startsWith("http:")){
-            urlToInstance = urlToInstance.replace("http:", "http:");
+            urlToInstance = urlToInstance.replace("http:", "https:");
         }
         if (!urlToInstance.endsWith("/")) {
             urlToInstance += "/";
