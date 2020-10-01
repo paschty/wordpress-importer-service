@@ -9,9 +9,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.naming.ConfigurationException;
 
+import de.vzg.service.wordpress.model.MayAuthorList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
@@ -156,7 +158,7 @@ public class Post2ModsConverter {
     }
 
     private void setAuthors() {
-        final List<Integer> authors = blogPost.getAuthors().getAuthorIds();
+        final List<Integer> authors = Optional.ofNullable(blogPost.getAuthors()).orElse(new MayAuthorList()).getAuthorIds();
         final Element authorInTemplate = getElement(AUTHOR_XPATH);
 
         if (authorInTemplate != null) {
