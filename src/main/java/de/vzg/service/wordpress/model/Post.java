@@ -25,13 +25,13 @@ public class Post {
 
     private int id, author;
 
-    private List<Integer> authors;
+    private MayAuthorList authors;
 
     private String wps_subtitle, date, date_gmt, modified, modified_gmt, slug, status, link, comment_status, ping_status, format;
 
     private PostContent title, content;
 
-    private List<Integer> categories, tags;
+    private List<Integer> categories;
 
     private Map<String, String> guid;
 
@@ -155,13 +155,6 @@ public class Post {
         this.categories = categories;
     }
 
-    public List<Integer> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Integer> tags) {
-        this.tags = tags;
-    }
 
     public String getWps_subtitle() {
         return wps_subtitle;
@@ -188,7 +181,6 @@ public class Post {
             ", title=" + title +
             ", content=" + content +
             ", categories=" + categories +
-            ", tags=" + tags +
             '}';
     }
 
@@ -200,11 +192,11 @@ public class Post {
         this.guid = guid;
     }
 
-    public List<Integer> getAuthors() {
+    public MayAuthorList getAuthors() {
         return authors;
     }
 
-    public void setAuthors(List<Integer> authors) {
+    public void setAuthors(MayAuthorList authors) {
         this.authors = authors;
     }
 }

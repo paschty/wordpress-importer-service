@@ -75,7 +75,7 @@ public class ServiceResource {
     public String convertBlogPostXML(@PathParam("config") String configName, @PathParam("id") int postID) {
         final ImporterConfigurationPart config = ImporterConfiguration.getConfiguration().getParts()
             .get(configName);
-        final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog());
+        final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog(), config.isArticleEndpoint());
         final Post post = postStore.getPost(postID);
         final Document mods = new Post2ModsConverter(post, config.getParentObject(), config.getBlog(),
             config.getPostTemplate()).getMods();
@@ -100,7 +100,7 @@ public class ServiceResource {
         throws IOException {
         final ImporterConfigurationPart config = ImporterConfiguration.getConfiguration().getParts()
             .get(configName);
-        Post post = PostFetcher.fetchPost(config.getBlog(), postID);
+        Post post = PostFetcher.fetchPost(config.getBlog(), postID, config.isArticleEndpoint());
         return Response.ok((StreamingOutput) outputStream -> {
             try {
                 new Post2PDFConverter().getPDF(post, outputStream, config.getBlog(), config.getLicense());

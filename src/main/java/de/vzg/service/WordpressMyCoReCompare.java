@@ -32,7 +32,7 @@ public class WordpressMyCoReCompare {
     public WordpressMyCoReComparingResult compare() throws IOException, JDOMException {
         final WordpressMyCoReComparingResult comparingResult = new WordpressMyCoReComparingResult();
         final LocalMyCoReObjectStore mcrStore = LocalMyCoReObjectStore.getInstance(config.getRepository());
-        final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog());
+        final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog(), config.isArticleEndpoint());
         final List<Post> allPosts = postStore.getAllPosts();
         final Map<String, String> mycoreIDValidationMap = comparingResult.getMycoreIDValidationMap();
         final HashMap<String, Post> notImported = new HashMap<>();

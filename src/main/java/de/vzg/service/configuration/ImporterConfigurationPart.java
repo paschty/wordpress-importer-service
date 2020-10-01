@@ -39,6 +39,8 @@ public class ImporterConfigurationPart {
 
     private String license;
 
+    private boolean articleEndpoint;
+
     public String getBlog() {
         return blog;
     }
@@ -101,5 +103,13 @@ public class ImporterConfigurationPart {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isArticleEndpoint() {
+        return articleEndpoint;
+    }
+
+    public void setArticleEndpoint(boolean articleEndpoint) {
+        this.articleEndpoint = articleEndpoint;
     }
 }

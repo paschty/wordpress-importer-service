@@ -30,6 +30,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.xml.transform.Result;
@@ -40,6 +41,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import de.vzg.service.wordpress.model.PostContent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -102,7 +104,9 @@ public class Post2PDFConverter {
     private String getXHtml(Post post, String blog, String license) throws IOException {
         String htmlString = getBaseHTML(post, blog);
 
-        htmlString += post.getContent().getRendered() + getLicense(license);
+        htmlString += Optional.ofNullable(post.getContent())
+                .map(PostContent::getRendered)
+                .orElse("<html></html>") + getLicense(license);
         final Document document = Jsoup
             .parse(htmlString);
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
@@ -130,7 +134,7 @@ public class Post2PDFConverter {
             htmlString += "<h2>" + post.getWps_subtitle() + "</h2>";
         }
 
-        final List<Integer> authors = post.getAuthors();
+        final List<Integer> authors = post.getAuthors().getAuthorIds();
         final String name = authors != null && authors.size() > 0 ? authors.stream().map(authorID -> {
             try {
                 return AuthorFetcher.fetchAuthor(blog, authorID);
