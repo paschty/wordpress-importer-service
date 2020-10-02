@@ -31,6 +31,8 @@ public class Post {
 
     private PostContent title, content;
 
+    private String layout_flexible_0_text_area, subline;
+
     private List<Integer> categories;
 
     private Map<String, String> guid;
@@ -198,5 +200,21 @@ public class Post {
 
     public void setAuthors(MayAuthorList authors) {
         this.authors = authors;
+    }
+
+    public String getLayout_flexible_0_text_area() {
+        return layout_flexible_0_text_area;
+    }
+
+    public void setLayout_flexible_0_text_area(String layout_flexible_0_text_area) {
+        this.layout_flexible_0_text_area = layout_flexible_0_text_area;
+    }
+
+    public String getSubline() {
+        return subline;
+    }
+
+    public void setSubline(String subline) {
+        this.subline = subline;
     }
 }

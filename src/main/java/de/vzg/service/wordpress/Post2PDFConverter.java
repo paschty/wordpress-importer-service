@@ -55,6 +55,7 @@ import org.apache.xmlgraphics.io.Resource;
 import org.apache.xmlgraphics.io.ResourceResolver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.vzg.service.wordpress.model.Author;
@@ -106,17 +107,24 @@ public class Post2PDFConverter {
         String htmlString = getBaseHTML(post, blog);
 
         htmlString += Optional.ofNullable(post.getContent())
-                .map(PostContent::getRendered)
-                .orElse("<html></html>") + getLicense(license);
-        final Document document = Jsoup
-            .parse(htmlString);
+            .map(PostContent::getRendered)
+            .orElse(Optional.ofNullable(post.getLayout_flexible_0_text_area())
+                .map(s -> "<p>\n</p>" + replaceLangBBCode(s))
+                .map(s -> s.replace("\n", "<br />"))
+                .map(s -> s.replace("<strong>", "<h3>").replace("</strong>", "</h3>"))
+                .orElse("<html></html>"))
+            + getLicense(license);
+
+        final Document document = Jsoup.parse(htmlString);
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
-        String html = document.html();
+        document.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
 
         return "<?xml version=\"1.0\"?> \n"
-            + "<!DOCTYPE some_name [ \n"
-            + "<!ENTITY nbsp \"&#160;\"> \n"
-            + "]> " + html.replace("<html>", "<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+            + document.outerHtml().replace("<html>", "<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+    }
+
+    private String replaceLangBBCode(String s) {
+        return s.replaceAll("\\[:[a-zA-Z]?[a-zA-Z]?\\]", "");
     }
 
     private String getLicense(String license) {
@@ -135,9 +143,13 @@ public class Post2PDFConverter {
             htmlString += "<h2>" + post.getWps_subtitle() + "</h2>";
         }
 
+        if (post.getSubline() != null && !post.getSubline().isEmpty()) {
+            htmlString += "<h2>" + replaceLangBBCode(post.getSubline()) + "</h2>";
+        }
+
         final List<Integer> authors = Optional.ofNullable(post.getAuthors())
-                .orElse(new MayAuthorList())
-                .getAuthorIds();
+            .orElse(new MayAuthorList())
+            .getAuthorIds();
 
         final String name = authors != null && authors.size() > 0 ? authors.stream().map(authorID -> {
             try {
