@@ -86,7 +86,7 @@ public class WordpressAutoImporter implements Runnable, ServletContextListener {
                         continue;
                     }
 
-                    final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog(), config.isArticleEndpoint());
+                    final LocalPostStore postStore = LocalPostStore.getInstance(config.getBlog());
                     final Post post = postStore.getPost(postInfo.getId());
                     final Document mods = new Post2ModsConverter(post,
                         config.getParentObject(),

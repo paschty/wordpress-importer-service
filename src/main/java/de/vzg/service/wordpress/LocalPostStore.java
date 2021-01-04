@@ -35,9 +35,8 @@ public class LocalPostStore {
 
     private boolean isArticleEndpoint;
 
-    private LocalPostStore(String instanceURL, boolean isArticleEndpoint) {
+    private LocalPostStore(String instanceURL) {
         this.instanceURL = instanceURL;
-        this.isArticleEndpoint = isArticleEndpoint;
 
         if (Files.exists(getDatabasePath())) {
             loadFromFile();
@@ -76,8 +75,8 @@ public class LocalPostStore {
         }
     }
 
-    public static LocalPostStore getInstance(String instanceURL, boolean isArticleEndpoint) {
-        return InstanceHolder.blogStoreMap.computeIfAbsent(instanceURL, (instance) -> new LocalPostStore(instanceURL, isArticleEndpoint));
+    public static LocalPostStore getInstance(String instanceURL) {
+        return InstanceHolder.blogStoreMap.computeIfAbsent(instanceURL, (instance) -> new LocalPostStore(instanceURL));
     }
 
     public List<Post> getAllPosts() {
@@ -88,7 +87,7 @@ public class LocalPostStore {
     private synchronized void update() {
         try {
             final Date currentDate = new Date();
-            final Set<Post> posts = PostFetcher.fetchUntil(instanceURL, lastUpdate, this.isArticleEndpoint);
+            final Set<Post> posts = PostFetcher.fetchUntil(instanceURL, lastUpdate);
             posts.forEach(p -> this.idPostMap.put(p.getId(), p));
 
             this.lastUpdate = currentDate;

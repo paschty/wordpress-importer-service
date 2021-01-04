@@ -52,7 +52,6 @@ public class PostFetcher {
 
     private static final String V2_POSTS_PATH = "wp-json/wp/v2/posts/";
 
-    private static final String V2_ARTICLE_PATH = "wp-json/wp/v2/articles/";
 
     public static final String V2_POSTS_PER_PAGE = "per_page";
 
@@ -60,36 +59,36 @@ public class PostFetcher {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static int fetchCount(String instanceURL, boolean article) throws IOException {
+    public static int fetchCount(String instanceURL) throws IOException {
         final HttpClient httpClient = HttpClientBuilder.create().build();
-        final String uri = Utils.getFixedURL(instanceURL) + getEndpoint(article) + "?" + V2_POSTS_PER_PAGE + "=100";
+        final String uri = Utils.getFixedURL(instanceURL) + getEndpoint() + "?" + V2_POSTS_PER_PAGE + "=100";
         LOGGER.debug("Fetching post count from {}", uri);
         final HttpGet get = new HttpGet(uri);
         final HttpResponse execute = httpClient.execute(get);
         return Integer.parseInt(execute.getFirstHeader(V2_POST_COUNT).getValue());
     }
 
-    private static String getEndpoint(boolean article) {
-        return article ? V2_ARTICLE_PATH : V2_POSTS_PATH;
+    private static String getEndpoint() {
+        return V2_POSTS_PATH;
     }
 
-    public static List<Post> fetch(String instanceURL, boolean article) throws IOException {
+    public static List<Post> fetch(String instanceURL) throws IOException {
         LOGGER.debug("Fetching all posts from {}", instanceURL);
-        final int count = fetchCount(instanceURL, article);
+        final int count = fetchCount(instanceURL);
         ArrayList<Post> allPosts = new ArrayList<>(count);
         for (int i = 1; i <= count; i++) {
-            allPosts.addAll(fetch(instanceURL, i, article));
+            allPosts.addAll(fetch(instanceURL, i));
         }
         return allPosts;
     }
 
-    public static Set<Post> fetchUntil(String instanceURL, Date until, boolean article) throws IOException {
+    public static Set<Post> fetchUntil(String instanceURL, Date until) throws IOException {
         final HttpClient httpClient = HttpClientBuilder.create().build();
         int pageCount = 999;
         Date lastChanged = null;
         Set<Post> postsUntil = new HashSet<Post>();
         for (int i = 1; i <= pageCount && (lastChanged == null || lastChanged.getTime() >= until.getTime()); i++) {
-            final String uri = buildURLForPage(instanceURL, i, article);
+            final String uri = buildURLForPage(instanceURL, i);
             LOGGER.debug("Fetching : {}", uri);
 
             final HttpGet get = new HttpGet(uri);
@@ -128,9 +127,9 @@ public class PostFetcher {
         return new GsonBuilder().registerTypeAdapter(MayAuthorList.class, new FailSafeAuthorsDeserializer()).create();
     }
 
-    public static List<Post> fetch(String instanceURL, int page, boolean article) throws IOException {
+    public static List<Post> fetch(String instanceURL, int page) throws IOException {
         final HttpClient httpClient = HttpClientBuilder.create().build();
-        final String uri = buildURLForPage(instanceURL, page, article);
+        final String uri = buildURLForPage(instanceURL, page);
         LOGGER.debug("Fetching : {}", uri);
         final HttpGet get = new HttpGet(uri);
         final HttpResponse execute = httpClient.execute(get);
@@ -142,14 +141,14 @@ public class PostFetcher {
         }
     }
 
-    private static String buildURLForPage(String instanceURL, int page, boolean article) {
-        return Utils.getFixedURL(instanceURL) + getEndpoint(article) + "?" + V2_POSTS_PAGE_PARAM + "=" + page + "&"
+    private static String buildURLForPage(String instanceURL, int page) {
+        return Utils.getFixedURL(instanceURL) + getEndpoint() + "?" + V2_POSTS_PAGE_PARAM + "=" + page + "&"
             + V2_POSTS_PER_PAGE + "=100" + "&orderby" + "=modified";
     }
 
-    public static Post fetchPost(String instanceURL, int id, boolean article) throws IOException {
+    public static Post fetchPost(String instanceURL, int id) throws IOException {
         final HttpClient httpClient = HttpClientBuilder.create().build();
-        final String uri = Utils.getFixedURL(instanceURL) + getEndpoint(article) + id;
+        final String uri = Utils.getFixedURL(instanceURL) + getEndpoint() + id;
         LOGGER.debug("Fetching : {}", uri);
         final HttpGet get = new HttpGet(uri);
         final HttpResponse execute = httpClient.execute(get);
