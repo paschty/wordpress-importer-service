@@ -1,6 +1,6 @@
 # WordpressImporterService
 
-A Service which synchronizes Wordpress blog posts with MyCoRe mods objects. The Server Part.
+A Service which synchronizes Wordpress blog posts with MyCoRe mods objects. This is the server part. For visualization you can use the [WordpressImporterGUI](https://github.com/gbv/wordpress-importer-gui).
 
 ## Development Server
 
