@@ -33,6 +33,8 @@ public class LocalPostStore {
 
     private Date lastUpdate;
 
+    private boolean isArticleEndpoint;
+
     private LocalPostStore(String instanceURL) {
         this.instanceURL = instanceURL;
 
@@ -74,7 +76,7 @@ public class LocalPostStore {
     }
 
     public static LocalPostStore getInstance(String instanceURL) {
-        return InstanceHolder.blogStoreMap.computeIfAbsent(instanceURL, LocalPostStore::new);
+        return InstanceHolder.blogStoreMap.computeIfAbsent(instanceURL, (instance) -> new LocalPostStore(instanceURL));
     }
 
     public List<Post> getAllPosts() {
